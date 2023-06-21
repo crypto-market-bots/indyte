@@ -1,5 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 // layouts
+import { useEffect, useState } from 'react';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
@@ -10,9 +11,19 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import DashboardCrmPage from './pages/DashBoardCrmPage';
+import Protected from './Protected';
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router() { 
+  const [route, setRoute] = useState("/dashboard/app");
+  useEffect(()=>{
+    const login =localStorage.getItem('token')
+    if(!login){
+      setRoute("/login")
+    }
+  })
+
+
   const routes = useRoutes([
     {
       path: 'login',
@@ -44,7 +55,7 @@ export default function Router() {
     },
     {
       path: '/',
-      element: <Navigate to="/login" replace />,
+      element: <Protected Component={DashboardLayout}/>,
     },
   ]);
 
