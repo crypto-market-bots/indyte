@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
@@ -25,14 +26,21 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+
+  const navigate = useNavigate();
   const [open, setOpen] = useState(null);
+
+  // import { useNavigate } from 'react-router-dom';
+
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
   const handleClose = () => {
-    setOpen(null);
+    localStorage.removeItem('token');
+    navigate('/login');
+
   };
 
   return (
