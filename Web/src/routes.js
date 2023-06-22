@@ -3,6 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import Protected from './components/Protected';
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
@@ -19,7 +20,7 @@ export default function Router() {
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to="/dashboard/crm" />, index: true },
+        { element: <Protected Component="/dashboard/crm" />, index: true },
         { path: 'crm', element: <DashboardCrmPage /> },
         { path: 'dietitian', element: <DashboardAppPage /> },
         // { path: 'user', element: <UserPage /> },
@@ -33,11 +34,11 @@ export default function Router() {
       path: 'login',
       element: <LoginPage />,
     },
-    {path: 'forgot-password', element: <ForgotPasswordPage /> },
+    { path: 'forgot-password', element: <ForgotPasswordPage /> },
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/crm" />, index: true },
+        { element: <Navigate to="/dashboard/crm" /> },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
@@ -45,6 +46,11 @@ export default function Router() {
     {
       path: '*',
       element: <Navigate to="/404" replace />,
+    },
+    {
+      path: '/',
+      element: <Protected Component="/dashboard/crm" />,
+      index: true,
     },
   ]);
 
