@@ -41,6 +41,10 @@ export default function LoginForm() {
   formData.append("email", value.email);
   formData.append("password", value.password);
 
+  const handleForgotPassword=()=>{
+    navigate('navigate')
+  }
+
 
   const handleClick = () => {
     console.log(value)
@@ -52,7 +56,7 @@ export default function LoginForm() {
         localStorage.setItem("token", res.data.token);
         // sessionStorage.setItem("keep logged in", "false");
         // sessionStorage.setItem("token", res.data.token);
-        navigate('/dashboard', { replace: true });
+        navigate('/dashboard/app', { replace: true });
 
 
       })
@@ -92,9 +96,13 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
-        </Link>
+       <Link
+  component="button"
+  onClick={handleForgotPassword}
+>
+  Forgot password
+</Link>
+
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
