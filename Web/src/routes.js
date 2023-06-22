@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
-//
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
