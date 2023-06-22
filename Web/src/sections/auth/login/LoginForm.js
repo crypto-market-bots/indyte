@@ -42,7 +42,7 @@ export default function LoginForm() {
   formData.append("password", value.password);
 
   const handleForgotPassword=()=>{
-    navigate('navigate')
+    navigate('/forgot-password')
   }
 
 
