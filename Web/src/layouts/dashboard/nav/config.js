@@ -23,12 +23,12 @@ const navConfig = [
     children: [
       {
         title: 'crm',
-        path: '/dashboard/app/crm',
+        path: '/dashboard/crm',
         icon: icon('ic_nested1'),
       },
       {
         title: 'dietitian',
-        path: '/dashboard/app/dietitian',
+        path: '/dashboard/dietitian',
         icon: icon('ic_nested2'),
       },
     ],
@@ -47,6 +47,28 @@ const navConfig = [
         title: 'dietitian',
         path: '/dashboard/user/dietitian',
         icon: icon('ic_nested4'),
+      },
+    ],
+  },
+  {
+    title: 'management',
+    path: '/dashboard/management',
+    icon: icon('ic_cart'),
+    children: [
+      {
+        title: 'workout',
+        path: '/dashboard/management/workout',
+        icon: icon('ic_nested5'),
+      },
+      {
+        title: 'meal',
+        path: '/dashboard/management/meal',
+        icon: icon('ic_nested6'),
+      },
+      {
+        title: 'water',
+        path: '/dashboard/management/water',
+        icon: icon('ic_nested7'),
       },
     ],
   },
