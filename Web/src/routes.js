@@ -13,6 +13,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import DashboardCrmPage from './pages/DashBoardCrmPage';
 import Protected from './Protected';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import DietitianPage from './pages/DietitianPage';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -39,7 +40,7 @@ export default function Router() {
         { path: 'dietitian', element: <DashboardAppPage /> },
         // { path: 'user', element: <UserPage /> },
         { path: 'user/customer', element: <UserPage /> },
-        { path: 'user/dietitian', element: <UserPage /> },
+        { path: 'user/dietitian', element: <DietitianPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
