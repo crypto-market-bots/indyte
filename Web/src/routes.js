@@ -12,6 +12,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import DashboardCrmPage from './pages/DashBoardCrmPage';
 import Protected from './Protected';
+import ChangePasswordPage from './pages/ChangePasswordPage';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -48,6 +49,7 @@ export default function Router() {
       element: <LoginPage />,
     },
     {path: 'forgot-password', element: <ForgotPasswordPage /> },
+    {path: 'change-password', element: <ChangePasswordPage /> },
     {
       element: <SimpleLayout />,
       children: [
