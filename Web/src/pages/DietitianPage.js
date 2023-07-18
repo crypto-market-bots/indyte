@@ -2,12 +2,14 @@ import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
 import { Card, CardContent, CardMedia,Button, Stack,Container, Typography, Grid, IconButton } from '@mui/material';
 import { sentenceCase } from 'change-case';
+import { useNavigate } from 'react-router-dom';
 import Iconify from '../components/iconify';
 import { UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 import Label from '../components/label';
 
 export default function DietitianPage() {
+  const navigate = useNavigate()
   const [filterName, setFilterName] = useState('');
   const [selected, setSelected] = useState([]);
 
@@ -19,6 +21,10 @@ export default function DietitianPage() {
     (user) => user.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
   );
 
+  const handleNavigate = ()=>{
+    navigate("/dashboard/user/dietitian/dfkjd")
+  }
+
   return (
     <>
       <Helmet>
@@ -28,7 +34,7 @@ export default function DietitianPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
             <Typography variant="h4" gutterBottom>
-                Dietian
+                Dietitian
             </Typography>
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
                 Add Dietitian
@@ -43,7 +49,7 @@ export default function DietitianPage() {
 
             return (
               <Grid item key={id} xs={12} sm={6} md={4} lg={3}>
-                <Card>
+                <Card onClick={handleNavigate} sx={{cursor:"pointer"}}>
                   <CardMedia component="img" image={avatarUrl} alt={name} />
 
                   <CardContent>
