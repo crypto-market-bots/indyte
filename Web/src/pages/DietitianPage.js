@@ -36,7 +36,7 @@ export default function DietitianPage() {
             <Typography variant="h4" gutterBottom>
                 Dietitian
             </Typography>
-            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+            <Button variant="contained" onClick={()=>navigate("/dashboard/user/dietitian/add")} startIcon={<Iconify icon="eva:plus-fill" />}>
                 Add Dietitian
             </Button>
         </Stack>

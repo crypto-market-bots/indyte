@@ -22,6 +22,8 @@ const users = [...Array(24)].map((_, index) => ({
     'Front End Developer',
     'Full Stack Developer',
   ]),
+  phoneNumber: faker.phone.number(),
+  goal: faker.lorem.word(),
 }));
 
 export default users;

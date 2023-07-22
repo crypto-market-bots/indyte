@@ -36,9 +36,10 @@ UserListToolbar.propTypes = {
   numSelected: PropTypes.number,
   filterName: PropTypes.string,
   onFilterName: PropTypes.func,
+  openMenu: PropTypes.func,
 };
 
-export default function UserListToolbar({ numSelected, filterName, onFilterName }) {
+export default function UserListToolbar({ numSelected, filterName, onFilterName,openMenu }) {
   return (
     <StyledRoot
       sx={{
@@ -73,7 +74,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
-          <IconButton>
+          <IconButton onClick ={openMenu}>
             <Iconify icon="ic:round-filter-list" />
           </IconButton>
         </Tooltip>
