@@ -21,7 +21,10 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Select, FormControl, InputLabel
 } from '@mui/material';
+
+import { Link } from 'react-router-dom';
 // components
 import Label from '../components/label';
 import Iconify from '../components/iconify';
@@ -32,12 +35,11 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 
 // ----------------------------------------------------------------------
-
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Company', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'company', label: 'Dietitian', alignRight: false },
+  { id: 'phoneNumber', label: 'Phone No.', alignRight: false },
+  { id: 'isVerified', label: 'Goal', alignRight: false },
   { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
@@ -67,14 +69,38 @@ function applySortFilter(array, comparator, query) {
     if (order !== 0) return order;
     return a[1] - b[1];
   });
+
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filter(array, (_user) => {
+      const nameMatch = _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      const dietitianMatch = _user.company.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      return nameMatch || dietitianMatch;
+    });
   }
+
   return stabilizedThis.map((el) => el[0]);
 }
 
+
+
+
+const DIETICIANS = [
+  'Dietician 1',
+  'Dietician 2',
+  'Dietician 3',
+  // Add more Dietician options as needed
+];
+const GOALS = ['Weight Loss', 'Weight Gain'];
+
 export default function UserPage() {
+
+  const [selectedGoal, setSelectedGoal] = useState('');
+
+  const [selectedDietician, setSelectedDietician] = useState('');
+
   const [open, setOpen] = useState(null);
+
+  const [openFilter, setOpenFilter] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -88,19 +114,20 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const handleOpenMenu = (event) => {
-    setOpen(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setOpen(null);
-  };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
+
+  const handleSelectDietician = (event) => {
+    setSelectedDietician(event.target.value);
+  };
+
+  const handleSelectGoal = (event) => {
+    setSelectedGoal(event.target.value);
+  };
+
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -140,6 +167,22 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
+  const handleOpenMenu = (event) => {
+    setOpen(event.currentTarget);
+  };
+
+  const handleCloseMenu = () => {
+    setOpen(null);
+  };
+
+  const handleOpenFilter = (event) => {
+    setOpenFilter(event.currentTarget);
+  };
+
+  const handleCloseFilter = () => {
+    setOpenFilter(null);
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -153,17 +196,9 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-          <Typography variant="h4" gutterBottom>
-            User
-          </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
-          </Button>
-        </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} openMenu={handleOpenFilter} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -179,7 +214,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified } = row;
+                    const { id, name, role, status, company, avatarUrl, isVerified,phoneNumber,goal } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -188,10 +223,11 @@ export default function UserPage() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
                         </TableCell>
 
+
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" noWrap>
+                            <Typography variant="subtitle2" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} noWrap component={Link} to={`/dashboard/user/customer/id`}>
                               {name}
                             </Typography>
                           </Stack>
@@ -199,9 +235,9 @@ export default function UserPage() {
 
                         <TableCell align="left">{company}</TableCell>
 
-                        <TableCell align="left">{role}</TableCell>
+                        <TableCell align="left">{phoneNumber}</TableCell>
 
-                        <TableCell align="left">{isVerified ? 'Yes' : 'No'}</TableCell>
+                        <TableCell align="left">{goal}</TableCell>
 
                         <TableCell align="left">
                           <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
@@ -260,6 +296,22 @@ export default function UserPage() {
           />
         </Card>
       </Container>
+      <Popover
+      open={Boolean(openFilter)}
+      anchorEl={openFilter}
+      onClose={handleCloseFilter}
+      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+    >
+      <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
+        <em>All</em>
+      </MenuItem>
+      {GOALS.map((goal) => (
+        <MenuItem key={goal} value={goal}>
+          {goal}
+        </MenuItem>
+      ))}
+    </Popover>
 
       <Popover
         open={Boolean(open)}
