@@ -15,6 +15,9 @@ import Protected from './Protected';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import DietitianPage from './pages/DietitianPage';
 import DietitianDetailPage from './pages/DietitianDetailPage';
+import ProfilePage from './pages/ProfilePage';
+import CustomerDetailPage from './pages/CustomerDetailPage';
+import AddDietitian from './pages/AddDietitian';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -32,6 +35,7 @@ export default function Router() {
       path: 'login',
       element: <LoginPage />,
     },
+    
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -41,15 +45,14 @@ export default function Router() {
         { path: 'dietitian', element: <DashboardAppPage /> },
         // { path: 'user', element: <UserPage /> },
         { path: 'user/customer', element: <UserPage /> },
+        { path: 'user/customer/:id', element: <CustomerDetailPage /> },
         { path: 'user/dietitian', element: <DietitianPage /> },
+        { path: 'user/dietitian/add', element: <AddDietitian /> },
         { path: 'user/dietitian/:id', element: <DietitianDetailPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
+        { path: 'profile', element: <ProfilePage /> },
       ],
-    },
-    {
-      path: 'login',
-      element: <LoginPage />,
     },
     {path: 'forgot-password', element: <ForgotPasswordPage /> },
     {path: 'change-password', element: <ChangePasswordPage /> },

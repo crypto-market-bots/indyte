@@ -37,9 +37,12 @@ export default function AccountPopover() {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = () => {
+  const handleClose = (label) => {
     localStorage.removeItem('token');
-    navigate('/login');
+    if (label ==="Profile"){
+      navigate("/dashboard/profile")
+    }
+    setOpen(false)
 
   };
 
@@ -97,7 +100,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={handleClose}>
+            <MenuItem key={option.label} onClick={()=>handleClose(option.label)}>
               {option.label}
             </MenuItem>
           ))}
