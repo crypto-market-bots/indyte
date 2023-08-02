@@ -15,6 +15,7 @@ import Protected from './Protected';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 import DietitianPage from './pages/DietitianPage';
 import DietitianDetailPage from './pages/DietitianDetailPage';
+import ProgressTracker from './pages/ProgressTracker';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -43,7 +44,7 @@ export default function Router() {
         { path: 'user/customer', element: <UserPage /> },
         { path: 'user/dietitian', element: <DietitianPage /> },
         { path: 'user/dietitian/:id', element: <DietitianDetailPage /> },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'products', element: <ProgressTracker/> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
