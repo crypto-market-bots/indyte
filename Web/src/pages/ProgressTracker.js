@@ -18,14 +18,14 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
-import Runningimage from '../Running.png'
-import ProgressImages from '../Person_data.svg'
-import BreakFast from '../breakfast.svg'
-import Lunch from '../lunch.svg'
-import Dinner from '../Dinner.svg'
-import arrow from '../arrow.svg'
+// import Runningimage from '../Running.png'
+// import ProgressImages from '../Person_data.svg'
+// import BreakFast from '../breakfast.svg'
+// import Lunch from '../lunch.svg'
+// import Dinner from '../Dinner.svg'
+// import arrow from '../arrow.svg'
 import "../styles/card.css"
-import ImagesTracker from './ImagesTracker';
+import ImagesTracker from './ImageTracker';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -243,7 +243,7 @@ export default function ProgressTracker() {
                     <div className="quantity">15gm</div>
                   </div>
                   <div className="image">
-                    <img src="/assets/images/fat.png" alt=""  />
+                    <img src="/assets/images/fat.png" width={20} height={20} alt=""  />
                   </div>
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={arrow} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
           </Item>
@@ -299,7 +299,7 @@ export default function ProgressTracker() {
               justifyContent: 'space-between',
             }}
           >
-            <Avatar alt="Remy Sharp" src={Lunch} sx={{ m: 1 }} />
+            <Avatar alt="Remy Sharp" src={"/assets/images/lunch.png"} sx={{ m: 1 }} />
             <Typography variant="h6" component="h1" sx={{ color: '#04297A' }}>
               Lunch
             </Typography>
@@ -312,7 +312,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={arrow} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
           </Item>
@@ -326,7 +326,7 @@ export default function ProgressTracker() {
               justifyContent: 'space-between',
             }}
           >
-            <Avatar alt="Remy Sharp" src={Dinner} sx={{ m: 1 }} />
+            <Avatar alt="Remy Sharp" src={"/assets/images/dinner.png"} sx={{ m: 1 }} />
             <Typography variant="h6" component="h1" sx={{ color: '#04297A' }}>
               Dinner
             </Typography>
@@ -339,7 +339,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={arrow} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -400,7 +400,7 @@ export default function ProgressTracker() {
               height: '100%',
             }}
           >
-            <ImagesTracker />
+            <ImagesTracker/>
           </Item>
         </Grid>
         <Grid item xs={3} sx={{ height: '600px'}} >
@@ -426,7 +426,7 @@ export default function ProgressTracker() {
               <Typography textAlign={"left"}  variant='subtitle1'>Step</Typography>
             </div>
             <img
-              src={Runningimage}
+              src={"/assets/images/running.png"}
               loading="lazy"
               alt="nothing"
               style={{ height: '100px', width: '100px', alignItems: 'center', justifyContent: 'center' }}

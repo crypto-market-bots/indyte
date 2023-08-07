@@ -50,31 +50,36 @@ const navConfig = [
       },
     ],
   },
+  // {
+  //   title: 'management',
+  //   path: '/dashboard/management',
+  //   icon: icon('ic_cart'),
+  //   children: [
+  //     {
+  //       title: 'workout',
+  //       path: '/dashboard/management/workout',
+  //       icon: icon('ic_nested5'),
+  //     },
+  //     {
+  //       title: 'meal',
+  //       path: '/dashboard/management/meal',
+  //       icon: icon('ic_nested6'),
+  //     },
+  //     {
+  //       title: 'water',
+  //       path: '/dashboard/management/water',
+  //       icon: icon('ic_nested7'),
+  //     },
+  //   ],
+  // },
   {
-    title: 'management',
-    path: '/dashboard/management',
+    title: 'Meal And Workout',
+    path: '/dashboard/meal-workout',
     icon: icon('ic_cart'),
-    children: [
-      {
-        title: 'workout',
-        path: '/dashboard/management/workout',
-        icon: icon('ic_nested5'),
-      },
-      {
-        title: 'meal',
-        path: '/dashboard/management/meal',
-        icon: icon('ic_nested6'),
-      },
-      {
-        title: 'water',
-        path: '/dashboard/management/water',
-        icon: icon('ic_nested7'),
-      },
-    ],
   },
   {
-    title: 'product',
-    path: '/dashboard/products',
+    title: 'Progress Tracker',
+    path: '/dashboard/progress-tracker',
     icon: icon('ic_cart'),
   },
   {

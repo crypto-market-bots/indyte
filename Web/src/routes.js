@@ -19,6 +19,7 @@ import ProfilePage from './pages/ProfilePage';
 import CustomerDetailPage from './pages/CustomerDetailPage';
 import AddDietitian from './pages/AddDietitian';
 import MealAndWorkout from './pages/MealAndWorkout';
+import ProgressTracker from './pages/ProgressTracker';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -50,8 +51,8 @@ export default function Router() {
         { path: 'user/dietitian', element: <DietitianPage /> },
         { path: 'user/dietitian/add', element: <AddDietitian /> },
         { path: 'user/dietitian/:id', element: <DietitianDetailPage /> },
-        { path: 'management/workout', element: <MealAndWorkout /> },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'meal-workout', element: <MealAndWorkout /> },
+        { path: 'progress-tracker', element: <ProgressTracker /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'profile', element: <ProfilePage /> },
       ],
