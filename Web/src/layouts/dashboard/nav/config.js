@@ -78,6 +78,11 @@ const navConfig = [
     icon: icon('ic_cart'),
   },
   {
+    title: 'History',
+    path: '/dashboard/history',
+    icon: icon('ic_cart'),
+  },
+  {
     title: 'Progress Tracker',
     path: '/dashboard/progress-tracker',
     icon: icon('ic_cart'),
