@@ -1,0 +1,37 @@
+.card {
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px 30px 20px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+  }
+
+  .header {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .quantity {
+    font-size: 10px;
+    font-weight: bold;
+  }
+  .center{
+    display: grid;
+    align-items: center; 
+  }
+  
+  .image {
+    border-radius: 50%;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .image img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+  }
+  
