@@ -1,10 +1,26 @@
-import { AutoComplete, Input, Segmented, Col, Row, Select, Space, DatePicker, Button, Avatar, Card, Typography, Tabs, Divider, Modal, Form } from 'antd';
-import React, { useRef, useState } from 'react'
-import { History, PlusOneOutlined } from '@mui/icons-material';
-import "../styles/button.css"
-import "../styles/usercard.css"
+import {
+  AutoComplete,
+  Input,
+  Segmented,
+  Col,
+  Row,
+  Select,
+  Space,
+  DatePicker,
+  Button,
+  Avatar,
+  Card,
+  Typography,
+  Tabs,
+  Divider,
+  Modal,
+  Form,
+} from 'antd';
+import React, { useRef, useState } from 'react';
+import { History, PlusOneOutlined, Add } from '@mui/icons-material';
+import '../styles/button.css';
+import '../styles/usercard.css';
 import { Box, IconButton } from '@mui/material';
-import { Add } from '@material-ui/icons';
 import { faker } from '@faker-js/faker';
 import { useNavigate } from 'react-router-dom';
 // import { AppNewsUpdate } from '../sections/@dashboard/app';
@@ -13,7 +29,7 @@ import HealthSnapshot from '../components/HealthCard';
 const index = 0;
 const MealAndWorkout = () => {
   const { Paragraph, Text } = Typography;
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   const renderTitle = (title) => (
     <span>
       {title}
@@ -38,9 +54,7 @@ const MealAndWorkout = () => {
         }}
       >
         {title}
-        <span>
-          {/* <UserOutlined /> {count} */}
-        </span>
+        <span>{/* <UserOutlined /> {count} */}</span>
       </div>
     ),
   });
@@ -50,14 +64,9 @@ const MealAndWorkout = () => {
     // Handle tab change here if needed
   };
 
-  const options = [
-    { value: 'Vishnu' },
-    { value: 'Lakshay' },
-    { value: 'Mohit' },
-    { value: 'Deepak' },
-  ];
+  const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
 
-  const [items, setItems] = useState(['Rice', 'Curd',"Peanut Butter"]);
+  const [items, setItems] = useState(['Rice', 'Curd', 'Peanut Butter']);
   const [name, setName] = useState('');
   const inputRef = useRef(null);
   const onNameChange = (event) => {
@@ -93,21 +102,19 @@ const MealAndWorkout = () => {
     <>
       <Segmented options={['Meal', 'Workout']} />
       <Row style={{ marginTop: 5 }} gutter={16}>
-        <Col span={6} style={{ marginTop: "7px" }}>
+        <Col span={6} style={{ marginTop: '7px' }}>
           <AutoComplete
             popupClassName="certain-category-search-dropdown"
             // dropdownMatchSelectWidth={500}
             style={{ width: 250 }}
             options={options}
-            filterOption={(inputValue, option) =>
-              option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
+            filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
           >
             <Input.Search size="large" placeholder="Search here" />
           </AutoComplete>
         </Col>
-        <Col span={16}  >
-          <Space size={8} align='' style={{ background: "#f0f2f5", padding: "10px", borderRadius: "5px" }}>
+        <Col span={16}>
+          <Space size={8} align="" style={{ background: '#f0f2f5', padding: '10px', borderRadius: '5px' }}>
             <Select
               style={{
                 width: 150,
@@ -150,17 +157,22 @@ const MealAndWorkout = () => {
             <DatePicker />
           </Space>
         </Col>
-        <Col span={2} >
+        <Col span={2}>
           <IconButton
             className="custom-button"
-            sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
+            sx={{
+              backgroundColor: '#1890ff',
+              color: '#fff',
+              borderRadius: '5px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            }}
           >
             Add <Add />
           </IconButton>
         </Col>
       </Row>
       <Row gutter={16} style={{ marginTop: 10 }}>
-        <Col span={8} >
+        <Col span={8}>
           <Card
             bordered={false}
             style={{
@@ -169,12 +181,12 @@ const MealAndWorkout = () => {
               padding: '8px',
             }}
           >
-            <Box display='flex' justifyContent={"center"}>
+            <Box display="flex" justifyContent={'center'}>
               <Avatar size={100} src="/assets/images/avatars/avatar_1.jpg" />
             </Box>
             <h2 style={{ marginBottom: '10px', textAlign: 'center' }}>User Name</h2>
             <div style={{ marginBottom: '20px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-around', }}>
+              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <Text strong>Height:</Text>
                 <Text>180 cm</Text>
               </div>
@@ -203,20 +215,23 @@ const MealAndWorkout = () => {
                 <Text>3 meals per day</Text>
               </div>
             </div>
-            <Box display="flex" justifyContent={"center"} >
-
-            <IconButton
-              className="custom-button"
-              onClick={()=>navigate("/dashboard/history")}
-              sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
-            >
-              View History <History />
-            </IconButton>
+            <Box display="flex" justifyContent={'center'}>
+              <IconButton
+                className="custom-button"
+                onClick={() => navigate('/dashboard/history')}
+                sx={{
+                  backgroundColor: '#1890ff',
+                  color: '#fff',
+                  borderRadius: '5px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                View History <History />
+              </IconButton>
             </Box>
           </Card>
-
         </Col>
-        <Col span={16} >
+        <Col span={16}>
           <HealthSnapshot
             title="Meal Update"
             list={[...Array(5)].map((_, index) => ({
@@ -230,12 +245,7 @@ const MealAndWorkout = () => {
               quantity: '200gm',
             }))}
           />
-          <Modal
-            title="Add New Meal"
-            open={isModalVisible}
-            onOk={handleModalOk}
-            onCancel={handleModalCancel}
-          >
+          <Modal title="Add New Meal" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalCancel}>
             <Form layout="vertical">
               <Form.Item label="Title" name="title" style={{ marginBottom: 8 }}>
                 <Input />
@@ -255,11 +265,10 @@ const MealAndWorkout = () => {
               </Form.Item>
             </Form>
           </Modal>
-
         </Col>
       </Row>
     </>
   );
-}
+};
 
-export default MealAndWorkout
+export default MealAndWorkout;
