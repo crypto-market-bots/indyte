@@ -26,24 +26,26 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
-
   const navigate = useNavigate();
   const [open, setOpen] = useState(null);
 
   // import { useNavigate } from 'react-router-dom';
 
-
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
-  const handleClose = (label) => {
+  const handleLogout = (event) => {
     localStorage.removeItem('token');
-    if (label ==="Profile"){
-      navigate("/dashboard/profile")
-    }
-    setOpen(false)
+    localStorage.removeItem('keep logged in');
+    navigate('/login');
+  };
 
+  const handleClose = (label) => {
+    if (label === 'Profile') {
+      navigate('/dashboard/profile');
+    }
+    setOpen(false);
   };
 
   return (
@@ -100,7 +102,7 @@ export default function AccountPopover() {
 
         <Stack sx={{ p: 1 }}>
           {MENU_OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={()=>handleClose(option.label)}>
+            <MenuItem key={option.label} onClick={() => handleClose(option.label)}>
               {option.label}
             </MenuItem>
           ))}
@@ -108,7 +110,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem sx={{ m: 1 }} onClick={handleLogout}>
           Logout
         </MenuItem>
       </Popover>

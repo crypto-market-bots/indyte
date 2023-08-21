@@ -3,22 +3,21 @@ import { useNavigate } from 'react-router-dom';
 // @mui
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import axios from "axios";
 // components
+import { toast } from 'react-hot-toast';
+import api from '../../../api';
 import Iconify from '../../../components/iconify';
-
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
-
+  const [loading, setLoading] = useState(false);
 
   const [value, setValue] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   const handlechange = (e) => {
@@ -29,47 +28,32 @@ export default function LoginForm() {
     }));
     console.log(name, value);
   };
-    
-    // setValue((prevState) => ({
-
-
-    // }));
-    // console.log( value);
-  
 
   const formData = new FormData();
-  formData.append("email", value.email);
-  formData.append("password", value.password);
+  formData.append('email', value.email);
+  formData.append('password', value.password);
 
-  const handleForgotPassword=()=>{
-    navigate('/forgot-password')
-  }
-
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
 
   const handleClick = () => {
-    console.log(value)
-    axios
-      .post("https://cineview.onrender.com/api/user/loginuser",  value )
+    console.log(value);
+    setLoading(true);
+    api
+      .post('/login-user', formData)
       .then((res) => {
-
-        localStorage.setItem("keep logged in", "true");
-        localStorage.setItem("token", res.data.token);
-        // sessionStorage.setItem("keep logged in", "false");
-        // sessionStorage.setItem("token", res.data.token);
-        navigate('/dashboard/app', { replace: true });
-
-
+        localStorage.setItem('keep logged in', 'true');
+        localStorage.setItem('token', res.data.token);
+        toast.success('login successfully');
+        navigate('/dashboard/crm', { replace: true });
       })
       .catch((error) => {
-        // Handle error response
-        // notify(false, error.response.data.message);
-        console.log(error);
+        toast.error(error?.response?.data?.message || 'something went wrong');
       })
       .finally(() => {
-        // console.log("Login done") // Set loading state to false regardless of success or failure
+        setLoading(false);
       });
-
-
   };
 
   return (
@@ -96,16 +80,12 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-       <Link
-  component="button"
-  onClick={handleForgotPassword}
->
-  Forgot password
-</Link>
-
+        <Link component="button" onClick={handleForgotPassword}>
+          Forgot password
+        </Link>
       </Stack>
 
-      <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton loading={loading} fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
         Login
       </LoadingButton>
     </>
