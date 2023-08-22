@@ -15,12 +15,15 @@ import {
   Divider,
   Modal,
   Form,
+  Drawer,
 } from 'antd';
+
 import React, { useRef, useState } from 'react';
-import { History, PlusOneOutlined, Add } from '@mui/icons-material';
+import { History, PlusOneOutlined, Add, HdrPlusOutlined, Delete } from '@mui/icons-material';
 import '../styles/button.css';
 import '../styles/usercard.css';
 import { Box, IconButton } from '@mui/material';
+import { PlusOutlined } from '@ant-design/icons';
 import { faker } from '@faker-js/faker';
 import { useNavigate } from 'react-router-dom';
 // import { AppNewsUpdate } from '../sections/@dashboard/app';
@@ -58,10 +61,17 @@ const MealAndWorkout = () => {
       </div>
     ),
   });
-
+  const { Option } = Select;
   const { TabPane } = Tabs;
   const handleTabChange = (activeKey) => {
     // Handle tab change here if needed
+  };
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
   };
 
   const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
@@ -95,6 +105,28 @@ const MealAndWorkout = () => {
   };
 
   const addItem = () => {
+    setIsModalVisible(true);
+  };
+
+  const initialValues = {
+    name: '',
+    type: '',
+    nutritions: [],
+    description: '',
+    ytlink1: '',
+    ytlink2: '',
+    image: '',
+  };
+
+  const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+  };
+
+  const [form] = Form.useForm();
+  // const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleAddButtonClick = () => {
+    form.setFieldsValue(initialValues); // Reset the form fields
     setIsModalVisible(true);
   };
 
@@ -160,6 +192,7 @@ const MealAndWorkout = () => {
         <Col span={2}>
           <IconButton
             className="custom-button"
+            onClick={showDrawer}
             sx={{
               backgroundColor: '#1890ff',
               color: '#fff',
@@ -245,26 +278,154 @@ const MealAndWorkout = () => {
               quantity: '200gm',
             }))}
           />
-          <Modal title="Add New Meal" open={isModalVisible} onOk={handleModalOk} onCancel={handleModalCancel}>
-            <Form layout="vertical">
-              <Form.Item label="Title" name="title" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="Description" name="description" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="YouTube Video Link" name="youtubeLink" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="Quantity" name="quantity" style={{ marginBottom: 0 }}>
-                <Select style={{ width: 150 }}>
-                  <Select.Option value="200gm">200gm</Select.Option>
-                  <Select.Option value="400gm">400gm</Select.Option>
-                  <Select.Option value="600gm">600gm</Select.Option>
-                </Select>
-              </Form.Item>
+          // Inside the return statement of your component
+          <Drawer
+            title="Create a new account"
+            width={720}
+            onClose={onClose}
+            open={open}
+            bodyStyle={{
+              paddingBottom: 80,
+            }}
+            extra={
+              <Space>
+                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={onClose} type="primary">
+                  Submit
+                </Button>
+              </Space>
+            }
+          >
+            <Form layout="vertical" hideRequiredMark>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="name"
+                    label="Name"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please enter user name',
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Please enter user name" />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="url"
+                    label="Url"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please enter url',
+                      },
+                    ]}
+                  >
+                    <Input
+                      style={{
+                        width: '100%',
+                      }}
+                      addonBefore="http://"
+                      addonAfter=".com"
+                      placeholder="Please enter url"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="owner"
+                    label="Owner"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please select an owner',
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Please select an owner">
+                      <Option value="xiao">Xiaoxiao Fu</Option>
+                      <Option value="mao">Maomao Zhou</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="type"
+                    label="Type"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please choose the type',
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Please choose the type">
+                      <Option value="private">Private</Option>
+                      <Option value="public">Public</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item
+                    name="approver"
+                    label="Approver"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please choose the approver',
+                      },
+                    ]}
+                  >
+                    <Select placeholder="Please choose the approver">
+                      <Option value="jack">Jack Ma</Option>
+                      <Option value="tom">Tom Liu</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    name="dateTime"
+                    label="DateTime"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Please choose the dateTime',
+                      },
+                    ]}
+                  >
+                    <DatePicker.RangePicker
+                      style={{
+                        width: '100%',
+                      }}
+                      getPopupContainer={(trigger) => trigger.parentElement}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={24}>
+                  <Form.Item
+                    name="description"
+                    label="Description"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'please enter url description',
+                      },
+                    ]}
+                  >
+                    <Input.TextArea rows={4} placeholder="please enter url description" />
+                  </Form.Item>
+                </Col>
+              </Row>
             </Form>
-          </Modal>
+          </Drawer>
         </Col>
       </Row>
     </>

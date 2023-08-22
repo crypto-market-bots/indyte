@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -21,7 +21,9 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
-  Select, FormControl, InputLabel
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
@@ -33,14 +35,18 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-
+import { fetchCustomer, fetchDietitian, fetchUser } from 'src/utils/apiCalls';
+import { useDispatch, useSelector } from 'react-redux';
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', alignRight: false },
-  { id: 'company', label: 'Dietitian', alignRight: false },
-  { id: 'phoneNumber', label: 'Phone No.', alignRight: false },
-  { id: 'isVerified', label: 'Goal', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'phone', label: 'Phone No.', alignRight: false },
+  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'goal', label: 'Goal', alignRight: false },
+  { id: 'dob', label: 'Dob', alignRight: false },
+  { id: 'height', label: 'Height', alignRight: false },
+  { id: 'weight', label: 'Weight', alignRight: false },
+  { id: 'gender', label: 'Gender', alignRight: false },
   { id: '' },
 ];
 
@@ -63,6 +69,7 @@ function getComparator(order, orderBy) {
 }
 
 function applySortFilter(array, comparator, query) {
+  console.log('array', array);
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
@@ -72,17 +79,18 @@ function applySortFilter(array, comparator, query) {
 
   if (query) {
     return filter(array, (_user) => {
-      const nameMatch = _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1;
-      const dietitianMatch = _user.company.toLowerCase().indexOf(query.toLowerCase()) !== -1;
-      return nameMatch || dietitianMatch;
+      console.log('user', _user);
+      const firstNameMatch = _user.first_name?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      const lastNameMatch = _user.last_name?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      const goalMatch = _user.goal?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      const emailMatch = _user.email?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      // const dietitianMatch = _user.company.toLowerCase().indexOf(query.toLowerCase()) !== -1;
+      return firstNameMatch || lastNameMatch || goalMatch || emailMatch;
     });
   }
 
   return stabilizedThis.map((el) => el[0]);
 }
-
-
-
 
 const DIETICIANS = [
   'Dietician 1',
@@ -93,6 +101,8 @@ const DIETICIANS = [
 const GOALS = ['Weight Loss', 'Weight Gain'];
 
 export default function UserPage() {
+  const dispatch = useDispatch();
+  const Customers = useSelector((state) => state.slice.data.customers);
 
   const [selectedGoal, setSelectedGoal] = useState('');
 
@@ -128,10 +138,9 @@ export default function UserPage() {
     setSelectedGoal(event.target.value);
   };
 
-
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = USERLIST.map((n) => n.name);
+      const newSelecteds = Customers.map((n) => n.first_name);
       setSelected(newSelecteds);
       return;
     }
@@ -185,9 +194,14 @@ export default function UserPage() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(Customers, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  useEffect(() => {
+    dispatch(fetchCustomer());
+    dispatch(fetchDietitian());
+  }, []);
 
   return (
     <>
@@ -196,9 +210,13 @@ export default function UserPage() {
       </Helmet>
 
       <Container>
-
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} openMenu={handleOpenFilter} />
+          <UserListToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            openMenu={handleOpenFilter}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -207,47 +225,53 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
+                  rowCount={Customers.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified,phoneNumber,goal } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
+                    const { first_name, last_name, dob, email, gender, goal, height, image, phone, weight, _id } = row;
+                    const selectedUser = selected.indexOf(email) !== -1;
 
                     return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                      <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
                         <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
+                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, email)} />
                         </TableCell>
-
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} noWrap component={Link} to={`/dashboard/user/customer/id`}>
-                              {name}
+                            <Avatar alt={first_name} src={image} />
+                            <Typography
+                              variant="subtitle2"
+                              style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                              noWrap
+                              component={Link}
+                              to={`/dashboard/user/customer/id`}
+                            >
+                              {first_name} {last_name}
                             </Typography>
                           </Stack>
                         </TableCell>
 
-                        <TableCell align="left">{company}</TableCell>
+                        <TableCell align="left">{phone}</TableCell>
 
-                        <TableCell align="left">{phoneNumber}</TableCell>
+                        <TableCell align="left">{email}</TableCell>
 
                         <TableCell align="left">{goal}</TableCell>
 
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
+                        <TableCell align="left">{dob}</TableCell>
+                        <TableCell align="left">{height}</TableCell>
+                        <TableCell align="left">{weight}</TableCell>
+                        <TableCell align="left">{gender}</TableCell>
+                        {/* 
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     );
                   })}
@@ -288,7 +312,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={Customers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -297,21 +321,21 @@ export default function UserPage() {
         </Card>
       </Container>
       <Popover
-      open={Boolean(openFilter)}
-      anchorEl={openFilter}
-      onClose={handleCloseFilter}
-      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-    >
-      <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
-        <em>All</em>
-      </MenuItem>
-      {GOALS.map((goal) => (
-        <MenuItem key={goal} value={goal}>
-          {goal}
+        open={Boolean(openFilter)}
+        anchorEl={openFilter}
+        onClose={handleCloseFilter}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
+          <em>All</em>
         </MenuItem>
-      ))}
-    </Popover>
+        {GOALS.map((goal) => (
+          <MenuItem key={goal} value={goal}>
+            {goal}
+          </MenuItem>
+        ))}
+      </Popover>
 
       <Popover
         open={Boolean(open)}

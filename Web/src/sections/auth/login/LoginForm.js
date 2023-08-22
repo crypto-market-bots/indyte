@@ -5,12 +5,14 @@ import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox } from '@m
 import { LoadingButton } from '@mui/lab';
 // components
 import { toast } from 'react-hot-toast';
-import api from '../../../api';
 import Iconify from '../../../components/iconify';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from 'src/utils/apiCalls';
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -18,6 +20,7 @@ export default function LoginForm() {
   const [value, setValue] = useState({
     email: '',
     password: '',
+    type: 'web',
   });
 
   const handlechange = (e) => {
@@ -29,31 +32,22 @@ export default function LoginForm() {
     console.log(name, value);
   };
 
-  const formData = new FormData();
-  formData.append('email', value.email);
-  formData.append('password', value.password);
-
   const handleForgotPassword = () => {
     navigate('/forgot-password');
   };
 
-  const handleClick = () => {
-    console.log(value);
-    setLoading(true);
-    api
-      .post('/login-user', formData)
-      .then((res) => {
-        localStorage.setItem('keep logged in', 'true');
-        localStorage.setItem('token', res.data.token);
-        toast.success('login successfully');
-        navigate('/dashboard/crm', { replace: true });
-      })
-      .catch((error) => {
-        toast.error(error?.response?.data?.message || 'something went wrong');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  const handleLogin = async () => {
+    let usertype, token;
+    // here we are using .then instead of useSelector because sometime useselector give us previous response value
+    await dispatch(login(value)).then((res) => {
+      usertype = res.payload?.data?.type;
+      token = res.payload?.token;
+    });
+    localStorage.setItem('keep logged in', 'true');
+    localStorage.setItem('token', token);
+    if (token) {
+      navigate(`/dashboard/${usertype === 'admin' ? 'crm' : 'dietitian'}`);
+    }
   };
 
   return (
@@ -85,7 +79,7 @@ export default function LoginForm() {
         </Link>
       </Stack>
 
-      <LoadingButton loading={loading} fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
+      <LoadingButton loading={loading} fullWidth size="large" type="submit" variant="contained" onClick={handleLogin}>
         Login
       </LoadingButton>
     </>
