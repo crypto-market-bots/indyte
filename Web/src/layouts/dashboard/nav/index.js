@@ -14,6 +14,7 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,8 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
+  const usertype = useSelector((state) => state.slice.data.login?.type);
+  const navConfigAccordingToUserType = usertype == 'admin' ? navConfig.admin : navConfig.dietitian;
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
@@ -75,7 +78,7 @@ export default function Nav({ openNav, onCloseNav }) {
         </Link>
       </Box>
 
-      <NavSection data={navConfig} />
+      <NavSection data={navConfigAccordingToUserType} />
 
       <Box sx={{ flexGrow: 1 }} />
     </Scrollbar>

@@ -4,12 +4,20 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
-
+import { Provider } from 'react-redux';
+import rootReducer from './store';
+import { configureStore } from '@reduxjs/toolkit';
 // ----------------------------------------------------------------------
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
-root.render(<App />);
+const store = configureStore({
+  reducer: rootReducer,
+});
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
 
 // If you want to enable client cache, register instead.
 serviceWorker.unregister();

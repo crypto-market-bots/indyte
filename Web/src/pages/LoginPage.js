@@ -69,13 +69,10 @@ export default function LoginPage() {
 
         <Container maxWidth="sm">
           <StyledContent>
-            <Typography variant="h4" gutterBottom sx={{ m: 2 }} > 
+            <Typography variant="h4" gutterBottom sx={{ m: 2 }}>
               Sign in to Minimal
-              <Typography >
-            Enter your details below.
+              <Typography>Enter your details below.</Typography>
             </Typography>
-            </Typography>
-           
 
             <LoginForm />
           </StyledContent>
