@@ -21,6 +21,7 @@ import AddDietitian from './pages/AddDietitian';
 import MealAndWorkout from './pages/MealAndWorkout';
 import ProgressTracker from './pages/ProgressTracker';
 import HistoryPage from './pages/HistoryPage';
+import AddMealPage from './pages/AddMealPage';
 // ----------------------------------------------------------------------
 
 export default function Router() { 
@@ -52,7 +53,11 @@ export default function Router() {
         { path: 'user/dietitian', element: <DietitianPage /> },
         { path: 'user/dietitian/add', element: <AddDietitian /> },
         { path: 'user/dietitian/:id', element: <DietitianDetailPage /> },
-        { path: 'meal-workout', element: <MealAndWorkout /> },
+        {
+          path: 'meal-workout',
+          element: <MealAndWorkout />,
+        },
+        { path: 'meal-workout/add-item', element: <AddMealPage /> },
         { path: 'history', element: <HistoryPage /> },
         { path: 'progress-tracker', element: <ProgressTracker /> },
         { path: 'blog', element: <BlogPage /> },
@@ -65,7 +70,7 @@ export default function Router() {
       element: <SimpleLayout />,
       children: [
         { element: <Navigate to="/dashboard/crm" />, index: true },
-        { path: '404', element: <Page404 /> },
+        // { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
     },

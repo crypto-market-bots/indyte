@@ -189,6 +189,13 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+<<<<<<< Updated upstream
+=======
+  useEffect(() => {
+    dispatch(fetchCustomer());
+  }, []);
+
+>>>>>>> Stashed changes
   return (
     <>
       <Helmet>
@@ -239,6 +246,7 @@ export default function UserPage() {
 
                         <TableCell align="left">{goal}</TableCell>
 
+<<<<<<< Updated upstream
                         <TableCell align="left">
                           <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
                         </TableCell>
@@ -248,6 +256,12 @@ export default function UserPage() {
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
+=======
+                        <TableCell align="left">{dob}</TableCell>
+                        <TableCell align="left">{height}</TableCell>
+                        <TableCell align="left">{weight}</TableCell>
+                        <TableCell align="left">{gender}</TableCell>
+>>>>>>> Stashed changes
                       </TableRow>
                     );
                   })}

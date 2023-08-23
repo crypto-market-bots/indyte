@@ -153,7 +153,17 @@ const MealAndWorkout = () => {
         <Col span={2} >
           <IconButton
             className="custom-button"
+<<<<<<< Updated upstream
             sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
+=======
+            onClick={() => navigate('add-item')}
+            sx={{
+              backgroundColor: '#1890ff',
+              color: '#fff',
+              borderRadius: '5px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            }}
+>>>>>>> Stashed changes
           >
             Add <Add />
           </IconButton>
@@ -230,6 +240,7 @@ const MealAndWorkout = () => {
               quantity: '200gm',
             }))}
           />
+<<<<<<< Updated upstream
           <Modal
             title="Add New Meal"
             open={isModalVisible}
@@ -256,6 +267,8 @@ const MealAndWorkout = () => {
             </Form>
           </Modal>
 
+=======
+>>>>>>> Stashed changes
         </Col>
       </Row>
     </>
