@@ -10,11 +10,15 @@ export const createApiThunk = (name, apiCall, successMessage, transformResponse,
       const response = await apiCall(requestData);
 
       // show success message
-      showSuccessNotification(
-        typeof successMessage === 'function'
-          ? successMessage(response) // Call the callback function if it's provided
-          : successMessage
-      );
+
+      if (successMessage) {
+        showSuccessNotification(
+          typeof successMessage === 'function'
+            ? successMessage(response) // Call the callback function if it's provided
+            : successMessage
+        );
+      }
+
 
       // return the response (can access with name payload)
       return transformResponse(response);

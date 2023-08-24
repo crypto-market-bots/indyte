@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
@@ -32,7 +32,7 @@ const Main = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function DashboardLayout() {
+function DashboardLayout() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -47,3 +47,5 @@ export default function DashboardLayout() {
     </StyledRoot>
   );
 }
+
+export default React.memo(DashboardLayout);

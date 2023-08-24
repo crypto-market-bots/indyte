@@ -14,7 +14,10 @@ import Scrollbar from '../../../components/scrollbar';
 import NavSection from '../../../components/nav-section';
 //
 import navConfig from './config';
-import { useSelector } from 'react-redux';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserDetails } from 'src/utils/apiCalls';
+
 
 // ----------------------------------------------------------------------
 
@@ -36,8 +39,12 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
-  const usertype = useSelector((state) => state.slice.data.login?.type);
-  const navConfigAccordingToUserType = usertype == 'admin' ? navConfig.admin : navConfig.dietitian;
+
+  const dispatch = useDispatch();
+  const usertype = useSelector((state) => state.slice.data.loggedInuserData.type);
+  const navConfigAccordingToUserType =
+    usertype == 'admin' ? navConfig.admin : usertype == 'dietitian' ? navConfig.dietitian : ['Loading...'];
+
   const { pathname } = useLocation();
 
   const isDesktop = useResponsive('up', 'lg');
@@ -46,6 +53,7 @@ export default function Nav({ openNav, onCloseNav }) {
     if (openNav) {
       onCloseNav();
     }
+    dispatch(getUserDetails());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 

@@ -32,6 +32,23 @@ export const fetchDietitian = createApiThunk(
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
+
+export const getUserDetails = createApiThunk(
+  'get/user',
+  () => api.get('/get-user-detail'),
+  null,
+  (response) => response.data.user,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addDietitian = createApiThunk(
+  'get/user',
+  () => api.post('/add-dietitian'),
+  'Dietitian Added successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
 // export const fetchOrders = createApiThunk(
 //   'fetch/orders',
 //   () => api.get('/api/fetch-orders'),
@@ -63,3 +80,4 @@ export const fetchDietitian = createApiThunk(
 //   (response) => response.data.message,
 //   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 // );
+

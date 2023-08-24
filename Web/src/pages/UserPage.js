@@ -198,10 +198,11 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
   useEffect(() => {
     dispatch(fetchCustomer());
-    dispatch(fetchDietitian());
   }, []);
+
 
   return (
     <>
@@ -261,17 +262,9 @@ export default function UserPage() {
                         <TableCell align="left">{email}</TableCell>
 
                         <TableCell align="left">{goal}</TableCell>
-
                         <TableCell align="left">{dob}</TableCell>
                         <TableCell align="left">{height}</TableCell>
                         <TableCell align="left">{weight}</TableCell>
-                        <TableCell align="left">{gender}</TableCell>
-                        {/* 
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
-                        </TableCell> */}
                       </TableRow>
                     );
                   })}
