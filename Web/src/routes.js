@@ -24,25 +24,24 @@ import HistoryPage from './pages/HistoryPage';
 import AddMealPage from './pages/AddMealPage';
 // ----------------------------------------------------------------------
 
-export default function Router() { 
-  const [route, setRoute] = useState("/dashboard/app");
-  useEffect(()=>{
-    const login =localStorage.getItem('token')
-    if(!login){
-      setRoute("/login")
+export default function Router() {
+  const [route, setRoute] = useState('/dashboard/app');
+  useEffect(() => {
+    const login = localStorage.getItem('token');
+    if (!login) {
+      setRoute('/login');
     }
-  })
-
+  });
 
   const routes = useRoutes([
     {
       path: 'login',
       element: <LoginPage />,
     },
-    
+
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: <Protected Component={DashboardLayout} />,
       children: [
         { element: <Navigate to="/dashboard/crm" />, index: true },
         { path: 'crm', element: <DashboardCrmPage /> },
@@ -64,8 +63,8 @@ export default function Router() {
         { path: 'profile', element: <ProfilePage /> },
       ],
     },
-    {path: 'forgot-password', element: <ForgotPasswordPage /> },
-    {path: 'change-password', element: <ChangePasswordPage /> },
+    { path: 'forgot-password', element: <ForgotPasswordPage /> },
+    { path: 'change-password', element: <ChangePasswordPage /> },
     {
       element: <SimpleLayout />,
       children: [
@@ -80,7 +79,7 @@ export default function Router() {
     },
     {
       path: '/',
-      element: <Protected Component={DashboardLayout}/>,
+      element: <Protected Component={DashboardLayout} />,
     },
   ]);
 

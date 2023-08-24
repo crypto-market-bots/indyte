@@ -32,6 +32,7 @@ export const fetchDietitian = createApiThunk(
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
+
 export const getUserDetails = createApiThunk(
   'get/user',
   () => api.get('/get-user-detail'),
@@ -47,3 +48,36 @@ export const addDietitian = createApiThunk(
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+
+// export const fetchOrders = createApiThunk(
+//   'fetch/orders',
+//   () => api.get('/api/fetch-orders'),
+//   'Orders Fetched ',
+//   (response) => response.data.orders,
+//   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+// );
+
+// export const refreshOrders = createApiThunk(
+//   'refresh/orders',
+//   () => api.get('/api/trigger-daftra-invoice-refresh'),
+//   (response) => `${response.data.new_records_added} new values added`,
+//   (response) => response.data.new_records_added,
+//   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+// );
+
+// export const fetchUsers = createApiThunk(
+//   'fetch/users',
+//   () => api.get('/api/fetch-users'),
+//   'users fetched successfully',
+//   (response) => response.data.users,
+//   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+// );
+
+// export const createUser = createApiThunk(
+//   'create/users',
+//   (requestData) => api.post('/api/register-user', requestData),
+//   'users created successfully',
+//   (response) => response.data.message,
+//   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+// );
+

@@ -2,6 +2,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { login, fetchCustomer, fetchDietitian, getUserDetails } from '../utils/apiCalls';
 
+
 const initialState = {
   success: {
     login: false,
@@ -11,6 +12,7 @@ const initialState = {
     customers: [],
     dietitians: [],
     loggedInuserData: [],
+
   },
   loading: {
     refreshOrders: false,
@@ -40,6 +42,7 @@ export const slice = createSlice({
       })
       .addCase(getUserDetails.fulfilled, (state, action) => {
         state.data.loggedInuserData = action.payload;
+
       });
   },
 });

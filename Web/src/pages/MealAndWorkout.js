@@ -1,10 +1,29 @@
-import { AutoComplete, Input, Segmented, Col, Row, Select, Space, DatePicker, Button, Avatar, Card, Typography, Tabs, Divider, Modal, Form } from 'antd';
-import React, { useRef, useState } from 'react'
-import { History, PlusOneOutlined } from '@mui/icons-material';
-import "../styles/button.css"
-import "../styles/usercard.css"
+import {
+  AutoComplete,
+  Input,
+  Segmented,
+  Col,
+  Row,
+  Select,
+  Space,
+  DatePicker,
+  Button,
+  Avatar,
+  Card,
+  Typography,
+  Tabs,
+  Divider,
+  Modal,
+  Form,
+  Drawer,
+} from 'antd';
+
+import React, { useRef, useState } from 'react';
+import { History, PlusOneOutlined, Add, HdrPlusOutlined, Delete } from '@mui/icons-material';
+import '../styles/button.css';
+import '../styles/usercard.css';
 import { Box, IconButton } from '@mui/material';
-import { Add } from '@material-ui/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { faker } from '@faker-js/faker';
 import { useNavigate } from 'react-router-dom';
 // import { AppNewsUpdate } from '../sections/@dashboard/app';
@@ -13,7 +32,7 @@ import HealthSnapshot from '../components/HealthCard';
 const index = 0;
 const MealAndWorkout = () => {
   const { Paragraph, Text } = Typography;
-  const navigate =useNavigate()
+  const navigate = useNavigate();
   const renderTitle = (title) => (
     <span>
       {title}
@@ -38,26 +57,26 @@ const MealAndWorkout = () => {
         }}
       >
         {title}
-        <span>
-          {/* <UserOutlined /> {count} */}
-        </span>
+        <span>{/* <UserOutlined /> {count} */}</span>
       </div>
     ),
   });
-
+  const { Option } = Select;
   const { TabPane } = Tabs;
   const handleTabChange = (activeKey) => {
     // Handle tab change here if needed
   };
+  const [open, setOpen] = useState(false);
+  const showDrawer = () => {
+    setOpen(true);
+  };
+  const onClose = () => {
+    setOpen(false);
+  };
 
-  const options = [
-    { value: 'Vishnu' },
-    { value: 'Lakshay' },
-    { value: 'Mohit' },
-    { value: 'Deepak' },
-  ];
+  const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
 
-  const [items, setItems] = useState(['Rice', 'Curd',"Peanut Butter"]);
+  const [items, setItems] = useState(['Rice', 'Curd', 'Peanut Butter']);
   const [name, setName] = useState('');
   const inputRef = useRef(null);
   const onNameChange = (event) => {
@@ -89,25 +108,45 @@ const MealAndWorkout = () => {
     setIsModalVisible(true);
   };
 
+  const initialValues = {
+    name: '',
+    type: '',
+    nutritions: [],
+    description: '',
+    ytlink1: '',
+    ytlink2: '',
+    image: '',
+  };
+
+  const formItemLayout = {
+    labelCol: { span: 6 },
+    wrapperCol: { span: 16 },
+  };
+
+  const [form] = Form.useForm();
+  // const [isModalVisible, setIsModalVisible] = useState(false);
+  const handleAddButtonClick = () => {
+    form.setFieldsValue(initialValues); // Reset the form fields
+    setIsModalVisible(true);
+  };
+
   return (
     <>
       <Segmented options={['Meal', 'Workout']} />
       <Row style={{ marginTop: 5 }} gutter={16}>
-        <Col span={6} style={{ marginTop: "7px" }}>
+        <Col span={6} style={{ marginTop: '7px' }}>
           <AutoComplete
             popupClassName="certain-category-search-dropdown"
             // dropdownMatchSelectWidth={500}
             style={{ width: 250 }}
             options={options}
-            filterOption={(inputValue, option) =>
-              option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-            }
+            filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
           >
             <Input.Search size="large" placeholder="Search here" />
           </AutoComplete>
         </Col>
-        <Col span={16}  >
-          <Space size={8} align='' style={{ background: "#f0f2f5", padding: "10px", borderRadius: "5px" }}>
+        <Col span={16}>
+          <Space size={8} align="" style={{ background: '#f0f2f5', padding: '10px', borderRadius: '5px' }}>
             <Select
               style={{
                 width: 150,
@@ -150,27 +189,18 @@ const MealAndWorkout = () => {
             <DatePicker />
           </Space>
         </Col>
-        <Col span={2} >
+        <Col span={2}>
           <IconButton
             className="custom-button"
-<<<<<<< Updated upstream
             sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
-=======
             onClick={() => navigate('add-item')}
-            sx={{
-              backgroundColor: '#1890ff',
-              color: '#fff',
-              borderRadius: '5px',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            }}
->>>>>>> Stashed changes
           >
             Add <Add />
           </IconButton>
         </Col>
       </Row>
       <Row gutter={16} style={{ marginTop: 10 }}>
-        <Col span={8} >
+        <Col span={8}>
           <Card
             bordered={false}
             style={{
@@ -179,12 +209,12 @@ const MealAndWorkout = () => {
               padding: '8px',
             }}
           >
-            <Box display='flex' justifyContent={"center"}>
+            <Box display="flex" justifyContent={'center'}>
               <Avatar size={100} src="/assets/images/avatars/avatar_1.jpg" />
             </Box>
             <h2 style={{ marginBottom: '10px', textAlign: 'center' }}>User Name</h2>
             <div style={{ marginBottom: '20px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-around', }}>
+              <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <Text strong>Height:</Text>
                 <Text>180 cm</Text>
               </div>
@@ -213,20 +243,23 @@ const MealAndWorkout = () => {
                 <Text>3 meals per day</Text>
               </div>
             </div>
-            <Box display="flex" justifyContent={"center"} >
-
-            <IconButton
-              className="custom-button"
-              onClick={()=>navigate("/dashboard/history")}
-              sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
-            >
-              View History <History />
-            </IconButton>
+            <Box display="flex" justifyContent={'center'}>
+              <IconButton
+                className="custom-button"
+                onClick={() => navigate('/dashboard/history')}
+                sx={{
+                  backgroundColor: '#1890ff',
+                  color: '#fff',
+                  borderRadius: '5px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                }}
+              >
+                View History <History />
+              </IconButton>
             </Box>
           </Card>
-
         </Col>
-        <Col span={16} >
+        <Col span={16}>
           <HealthSnapshot
             title="Meal Update"
             list={[...Array(5)].map((_, index) => ({
@@ -240,39 +273,10 @@ const MealAndWorkout = () => {
               quantity: '200gm',
             }))}
           />
-<<<<<<< Updated upstream
-          <Modal
-            title="Add New Meal"
-            open={isModalVisible}
-            onOk={handleModalOk}
-            onCancel={handleModalCancel}
-          >
-            <Form layout="vertical">
-              <Form.Item label="Title" name="title" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="Description" name="description" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="YouTube Video Link" name="youtubeLink" style={{ marginBottom: 8 }}>
-                <Input />
-              </Form.Item>
-              <Form.Item label="Quantity" name="quantity" style={{ marginBottom: 0 }}>
-                <Select style={{ width: 150 }}>
-                  <Select.Option value="200gm">200gm</Select.Option>
-                  <Select.Option value="400gm">400gm</Select.Option>
-                  <Select.Option value="600gm">600gm</Select.Option>
-                </Select>
-              </Form.Item>
-            </Form>
-          </Modal>
-
-=======
->>>>>>> Stashed changes
         </Col>
       </Row>
     </>
   );
-}
+};
 
-export default MealAndWorkout
+export default MealAndWorkout;
