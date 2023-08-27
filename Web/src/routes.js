@@ -22,6 +22,8 @@ import MealAndWorkout from './pages/MealAndWorkout';
 import ProgressTracker from './pages/ProgressTracker';
 import HistoryPage from './pages/HistoryPage';
 import AddMealPage from './pages/AddMealPage';
+import ManageMealPage from './pages/ManageMealPage';
+import Templates from './pages/Templates';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -57,10 +59,14 @@ export default function Router() {
           element: <MealAndWorkout />,
         },
         { path: 'meal-workout/add-item', element: <AddMealPage /> },
+        { path: 'templates/edit-item/:id', element: <AddMealPage /> },
+        { path: 'templates/add-item', element: <AddMealPage /> },
+        { path: 'meal-workout/manage-meal', element: <ManageMealPage /> },
         { path: 'history', element: <HistoryPage /> },
         { path: 'progress-tracker', element: <ProgressTracker /> },
         { path: 'blog', element: <BlogPage /> },
         { path: 'profile', element: <ProfilePage /> },
+        { path: 'templates', element: <Templates /> },
       ],
     },
     { path: 'forgot-password', element: <ForgotPasswordPage /> },

@@ -1,7 +1,18 @@
 // slice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { login, fetchCustomer, fetchDietitian, getUserDetails } from '../utils/apiCalls';
-
+import {
+  login,
+  fetchCustomer,
+  fetchDietitian,
+  getUserDetails,
+  fetchMeal,
+  fetchSingleMealData,
+  EditMeal,
+  fetchAllExercises,
+  fetchWorkouts,
+  fetchSingleExercise,
+  fetchSingleWorkout,
+} from '../utils/apiCalls';
 
 const initialState = {
   success: {
@@ -12,11 +23,19 @@ const initialState = {
     customers: [],
     dietitians: [],
     loggedInuserData: [],
-
+    meals: [],
+    singlemeal: [],
+    exercises: [],
+    singleExercise: [],
+    workouts: [],
+    singleWorkout: [],
   },
   loading: {
     refreshOrders: false,
     login: false,
+    singlemeal: false,
+    singleExercise: false,
+    singleWorkout: false,
   },
 };
 
@@ -42,12 +61,40 @@ export const slice = createSlice({
       })
       .addCase(getUserDetails.fulfilled, (state, action) => {
         state.data.loggedInuserData = action.payload;
-
+      })
+      .addCase(fetchMeal.fulfilled, (state, action) => {
+        state.data.meals = action.payload;
+      })
+      .addCase(fetchSingleMealData.pending, (state, action) => {
+        state.loading.singlemeal = true;
+      })
+      .addCase(fetchSingleMealData.fulfilled, (state, action) => {
+        state.loading.singlemeal = false;
+        state.data.singlemeal = action.payload;
+      })
+      .addCase(fetchAllExercises.fulfilled, (state, action) => {
+        state.data.exercises = action.payload;
+      })
+      .addCase(fetchSingleExercise.pending, (state, action) => {
+        state.loading.singleExercise = true;
+      })
+      .addCase(fetchSingleExercise.fulfilled, (state, action) => {
+        state.loading.singleExercise = false;
+        state.data.singleExercise = action.payload;
+      })
+      .addCase(fetchWorkouts.fulfilled, (state, action) => {
+        state.data.workouts = action.payload;
+      })
+      .addCase(fetchSingleWorkout.pending, (state, action) => {
+        state.loading.singleWorkout = true;
+      })
+      .addCase(fetchSingleWorkout.fulfilled, (state, action) => {
+        state.loading.singleWorkout = false;
+        state.data.singleWorkout = action.payload;
       });
   },
 });
 
-// eslint-disable-next-line no-empty-pattern
 export const {} = slice.actions;
 
 export default slice.reducer;
