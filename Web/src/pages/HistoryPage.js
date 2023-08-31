@@ -21,7 +21,8 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
- FormControl, InputLabel
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 
 import { Link } from 'react-router-dom';
@@ -82,15 +83,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-
-  const options = [
-    { value: 'Vishnu' },
-    { value: 'Lakshay' },
-    { value: 'Mohit' },
-    { value: 'Deepak' },
-  ];
-
-
+const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
 
 const DIETICIANS = [
   'Dietician 1',
@@ -101,7 +94,6 @@ const DIETICIANS = [
 const GOALS = ['Weight Loss', 'Weight Gain'];
 
 export default function HistoryPage() {
-
   const [selectedGoal, setSelectedGoal] = useState('');
 
   const [selectedDietician, setSelectedDietician] = useState('');
@@ -135,7 +127,6 @@ export default function HistoryPage() {
   const handleSelectGoal = (event) => {
     setSelectedGoal(event.target.value);
   };
-
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
@@ -204,9 +195,12 @@ export default function HistoryPage() {
       </Helmet>
 
       <Container>
-        <Row style={{marginBottom:20,display:'flex',alignItems:'center'}}>
-            <Col span={5}> <Segmented options={['Meal', 'Workout']} /></Col>
-            <Col span={8}>
+        <Row style={{ marginBottom: 20, display: 'flex', alignItems: 'center' }}>
+          <Col span={5}>
+            {' '}
+            <Segmented options={['Meal', 'Workout']} />
+          </Col>
+          {/* <Col span={8}>
                 <AutoComplete
                     popupClassName="certain-category-search-dropdown"
                     style={{
@@ -216,18 +210,25 @@ export default function HistoryPage() {
                 >
                     <Input.Search size="large" placeholder="Search User" />
                 </AutoComplete>
-            </Col>
-            <Col>
-            <Select placeholder="type" style={{ width: 150 }}>
-              <Select.Option value="Option 1">Breakfast</Select.Option>
-              <Select.Option value="Option 2">Lunch</Select.Option>
-              <Select.Option value="Option 3">Dinner</Select.Option>
-            </Select></Col>
+            </Col> */}
+          <Col>
+            <Select placeholder="Meal" style={{ width: 150 }}>
+              <Select.Option value="Meal">Meal</Select.Option>
+              <Select.Option value="Workout">Workout</Select.Option>
+              <Select.Option value="Sleep">Sleep</Select.Option>
+              <Select.Option value="Water">Water</Select.Option>
+              <Select.Option value="Step">Step</Select.Option>
+            </Select>
+          </Col>
         </Row>
 
         <Card>
-       
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} openMenu={handleOpenFilter} />
+          <UserListToolbar
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            openMenu={handleOpenFilter}
+          />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -243,7 +244,7 @@ export default function HistoryPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified,phoneNumber,goal } = row;
+                    const { id, name, role, status, company, avatarUrl, isVerified, phoneNumber, goal } = row;
                     const selectedUser = selected.indexOf(name) !== -1;
 
                     return (
@@ -252,11 +253,16 @@ export default function HistoryPage() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
                         </TableCell>
 
-
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
                             <Avatar alt={name} src={avatarUrl} />
-                            <Typography variant="subtitle2" style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }} noWrap component={Link} to={`/dashboard/user/customer/id`}>
+                            <Typography
+                              variant="subtitle2"
+                              style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                              noWrap
+                              component={Link}
+                              to={`/dashboard/user/customer/id`}
+                            >
                               {name}
                             </Typography>
                           </Stack>
@@ -326,21 +332,21 @@ export default function HistoryPage() {
         </Card>
       </Container>
       <Popover
-      open={Boolean(openFilter)}
-      anchorEl={openFilter}
-      onClose={handleCloseFilter}
-      anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-    >
-      <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
-        <em>All</em>
-      </MenuItem>
-      {GOALS.map((goal) => (
-        <MenuItem key={goal} value={goal}>
-          {goal}
+        open={Boolean(openFilter)}
+        anchorEl={openFilter}
+        onClose={handleCloseFilter}
+        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
+          <em>All</em>
         </MenuItem>
-      ))}
-    </Popover>
+        {GOALS.map((goal) => (
+          <MenuItem key={goal} value={goal}>
+            {goal}
+          </MenuItem>
+        ))}
+      </Popover>
 
       <Popover
         open={Boolean(open)}

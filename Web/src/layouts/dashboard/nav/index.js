@@ -40,9 +40,9 @@ Nav.propTypes = {
 export default function Nav({ openNav, onCloseNav }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.slice.data.loggedInuserData);
-  console.log('usertyep', user.type);
+  // console.log('usertyep', user.type);
   const navConfigAccordingToUserType =
-    user.type == 'admin' ? navConfig.admin : user.type == 'dietitian' ? navConfig.dietitian : [{ title: 'Loading...' }];
+    user?.type == 'admin' ? navConfig.admin : user?.type == 'dietitian' ? navConfig.dietitian : [{ title: 'Loading...' }];
 
   const { pathname } = useLocation();
 

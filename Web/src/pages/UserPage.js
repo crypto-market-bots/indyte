@@ -235,6 +235,7 @@ export default function UserPage() {
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                     const { first_name, last_name, dob, email, gender, goal, height, image, phone, weight, _id } = row;
                     const selectedUser = selected.indexOf(email) !== -1;
+                    console.log("row==>",row)
 
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -250,7 +251,7 @@ export default function UserPage() {
                               style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
                               noWrap
                               component={Link}
-                              to={`/dashboard/user/customer/id`}
+                              to={`/dashboard/user/customer/${_id}`}
                             >
                               {first_name} {last_name}
                             </Typography>

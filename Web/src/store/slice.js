@@ -12,6 +12,8 @@ import {
   fetchWorkouts,
   fetchSingleExercise,
   fetchSingleWorkout,
+  fetchCustomerDetails,
+  fetchDietitianDetails,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -21,7 +23,9 @@ const initialState = {
   data: {
     login: [],
     customers: [],
+    customerDetails: [],
     dietitians: [],
+    dietitiansDetails: [],
     loggedInuserData: [],
     meals: [],
     singlemeal: [],
@@ -56,8 +60,14 @@ export const slice = createSlice({
       .addCase(fetchCustomer.fulfilled, (state, action) => {
         state.data.customers = action.payload;
       })
+      .addCase(fetchCustomerDetails.fulfilled, (state, action) => {
+        state.data.customerDetails = action.payload;
+      })
       .addCase(fetchDietitian.fulfilled, (state, action) => {
         state.data.dietitians = action.payload;
+      })
+      .addCase(fetchDietitianDetails.fulfilled, (state, action) => {
+        state.data.dietitiansDetails = action.payload;
       })
       .addCase(getUserDetails.fulfilled, (state, action) => {
         state.data.loggedInuserData = action.payload;

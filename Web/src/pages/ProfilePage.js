@@ -74,6 +74,8 @@ const PersonalInfoContainer = styled(Box)(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
+
+
 const ProfilePage = () => {
   const user = useSelector((state) => state.slice.data.loggedInuserData);
   const isLargeScreen = useMediaQuery((theme) => theme.breakpoints.up('md'));
@@ -99,7 +101,7 @@ const ProfilePage = () => {
         {/* Person Info Section */}
         <Grid item xs={12} md={12}>
           <PersonInfoContainer>
-            <DietitianAvatar src={user.photo} alt="Person Image" />
+            <DietitianAvatar src={user?.profile_photo} alt="Person Image" />
             <Box ml={2}>
               <DietitianName variant="h6">
                 {' '}
@@ -108,9 +110,9 @@ const ProfilePage = () => {
               </DietitianName>
               <DietitianBio variant="body1">{user.past_work_details}</DietitianBio>
             </Box>
-            <EditButton variant="outlined" color="primary" style={{ marginLeft: 'auto' }}>
+            {/* <EditButton variant="outlined" color="primary" style={{ marginLeft: 'auto' }}>
               Edit
-            </EditButton>
+            </EditButton> */}
           </PersonInfoContainer>
         </Grid>
 
@@ -119,9 +121,9 @@ const ProfilePage = () => {
           <PersonalInfoContainer>
             <Box display="flex" justifyContent={'space-between'}>
               <Typography variant="h6">Personal Information</Typography>
-              <EditButton variant="outlined" color="primary">
+              {/* <EditButton variant="outlined" color="primary">
                 Edit
-              </EditButton>
+              </EditButton> */}
             </Box>
 
             <Grid container spacing={2}>
@@ -130,25 +132,24 @@ const ProfilePage = () => {
                   <ListItem>
                     <ListItemText
                       primary="Name"
-                      secondary={`${user.first_name}${user.last_name}
-                      )}`}
+                      secondary={`${user.first_name}${' '}${user.last_name}`}
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Phone Number" secondary="[Phone Number here]" />
+                    <ListItemText primary="Phone Number" secondary={user?.phone} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Email" secondary="[Email here]" />
+                    <ListItemText primary="Email" secondary={user?.email} />
                   </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} sm={4} md={4}>
                 <List dense>
                   <ListItem>
-                    <ListItemText primary="Qualification" secondary="[Qualification here]" />
+                    <ListItemText primary="Qualification" secondary={user?.qualification} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Study Details" secondary="[Study Details here]" />
+                    <ListItemText primary="Study Details" secondary={user?.study_details} />
                   </ListItem>
                   <ListItem>
                     <ListItemText
@@ -176,13 +177,13 @@ const ProfilePage = () => {
               <Grid item xs={12} sm={4} md={4}>
                 <List dense>
                   <ListItem>
-                    <ListItemText primary="Height" secondary="[Height here]" />
+                    <ListItemText primary="Height" secondary={user?.height} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Weight" secondary="[Weight here]" />
+                    <ListItemText primary="Weight" secondary={user?.weight} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Experience" secondary="[Experience here]" />
+                    <ListItemText primary="Experience" secondary={user?.experience} />
                   </ListItem>
                 </List>
               </Grid>
@@ -195,22 +196,22 @@ const ProfilePage = () => {
           <PersonalInfoContainer>
             <Box display="flex" justifyContent={'space-between'}>
               <Typography variant="h6">ID Card Information</Typography>
-              <EditButton variant="outlined" color="primary">
+              {/* <EditButton variant="outlined" color="primary">
                 Edit
-              </EditButton>
+              </EditButton> */}
             </Box>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={4} md={4}>
                 <List dense>
                   <ListItem>
-                    <ListItemText primary="ID Card Type" secondary="Pan Card" />
+                    <ListItemText primary="ID Card Type" secondary={user?.id_card_type} />
                   </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} sm={4} md={4}>
                 <List dense>
                   <ListItem>
-                    <ListItemText primary="ID Card Number" secondary="ABCD1234XYZ" />
+                    <ListItemText primary="ID Card Number" secondary={user?.id_card_number}/>
                   </ListItem>
                 </List>
               </Grid>
@@ -227,7 +228,7 @@ const ProfilePage = () => {
         </Grid>
 
         {/* Guardian and Emergency Contact Section */}
-        <Grid item xs={12} md={12}>
+        {/* <Grid item xs={12} md={12}>
           <PersonalInfoContainer>
             <Box display="flex" justifyContent={'space-between'}>
               <Typography variant="h6">Guardian and Emergency Contact</Typography>
@@ -261,9 +262,9 @@ const ProfilePage = () => {
               </Grid>
             </Grid>
           </PersonalInfoContainer>
-        </Grid>
+        </Grid> */}
 
-        <Grid item xs={12} md={12}>
+        {/* <Grid item xs={12} md={12}>
           <PersonalInfoContainer>
             <Box display="flex" justifyContent={'space-between'}>
               <Typography variant="h6">Additional Information</Typography>
@@ -306,12 +307,132 @@ const ProfilePage = () => {
                       secondary="American Dietetic Association (ADA), International Society of Sports Nutrition (ISSN)"
                     />
                   </ListItem>
-                  {/* Add more ListItem components for more fields */}
+                </List>
+              </Grid>
+            </Grid>
+          </PersonalInfoContainer>
+        </Grid> */}
+
+         {/* Address Section */}
+         <Grid item xs={12} md={12}>
+          <PersonalInfoContainer>
+            <Box display="flex" justifyContent={'space-between'}>
+              <Typography variant="h6">Local Address</Typography>
+              {/* <EditButton variant="outlined" color="primary">
+                Edit
+              </EditButton> */}
+            </Box>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Address Line 1" secondary={user?.local_address?.address_line1} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Address Line 2" secondary={user?.local_address?.address_line2} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="City" secondary={user?.local_address?.city} />
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="State" secondary={user?.local_address?.state} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="ZIP Code" secondary={user?.local_address?.zip} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Country" secondary={user?.local_address?.country} />
+                  </ListItem>
                 </List>
               </Grid>
             </Grid>
           </PersonalInfoContainer>
         </Grid>
+
+         {/* Local Guardian Address Section */}
+         <Grid item xs={12} md={12}>
+          <PersonalInfoContainer>
+            <Box display="flex" justifyContent={'space-between'}>
+              <Typography variant="h6">Local Guardian Address</Typography>
+              {/* <EditButton variant="outlined" color="primary">
+                Edit
+              </EditButton> */}
+            </Box>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Address Line 1" secondary={user?.local_guardian_address?.address_line1} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Address Line 2" secondary={user?.local_guardian_address?.address_line2} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="City" secondary={user?.local_guardian_address?.city} />
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="State" secondary={user?.local_guardian_address?.state} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="ZIP Code" secondary={user?.local_guardian_address?.zip} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Country" secondary={user?.local_guardian_address?.country} />
+                  </ListItem>
+                </List>
+              </Grid>
+            </Grid>
+          </PersonalInfoContainer>
+        </Grid>
+
+        {/* Permanent Address Section */}
+        <Grid item xs={12} md={12}>
+          <PersonalInfoContainer>
+            <Box display="flex" justifyContent={'space-between'}>
+              <Typography variant="h6">Permanent Address</Typography>
+              {/* <EditButton variant="outlined" color="primary">
+                Edit
+              </EditButton> */}
+            </Box>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="Address Line 1" secondary={user?.permanent_address?.address_line1} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Address Line 2" secondary={user?.permanent_address?.address_line2} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="City" secondary={user?.permanent_address?.city} />
+                  </ListItem>
+                </List>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6}>
+                <List dense>
+                  <ListItem>
+                    <ListItemText primary="State" secondary={user?.permanent_address?.state} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="ZIP Code" secondary={user?.permanent_address?.zip} />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemText primary="Country" secondary={user?.permanent_address?.country} />
+                  </ListItem>
+                </List>
+              </Grid>
+            </Grid>
+          </PersonalInfoContainer>
+        </Grid>
+
       </Grid>
 
       {/* Dialog for Document Picture */}
@@ -320,7 +441,7 @@ const ProfilePage = () => {
         <DialogContent>
           {/* Replace 'document_picture.jpg' with the actual URL of the document picture */}
           <img
-            src="https://cdn.pixabay.com/photo/2022/11/09/00/44/aadhaar-card-7579588_960_720.png"
+            src={user?.id_card_photo}
             alt="Document"
             style={{ maxWidth: '100%', maxHeight: 400 }}
           />

@@ -20,7 +20,15 @@ export const fetchCustomer = createApiThunk(
   'fetch/customers',
   () => api.get('/fetch-user?type=user'),
   'customers fetched successfully',
-  (response) => response.data.data,
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchCustomerDetails = createApiThunk(
+  'fetch/customers-details',
+  (id) => api.get(`/fetch-user-details/${id}?type=user`),
+  'customer fetched successfully',
+  (response) => response?.data?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
@@ -29,6 +37,13 @@ export const fetchDietitian = createApiThunk(
   () => api.get('/fetch-user?type=dietitian'),
   'dietitians fetched successfully',
   (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const assignDietitian = createApiThunk(
+  'assign/dietitian',
+  (requestData) => api.post('/assign-dietitian', requestData),
+  'dietitians assigned successfully',
+  (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
@@ -45,6 +60,13 @@ export const addDietitian = createApiThunk(
   () => api.post('/add-dietitian'),
   'Dietitian Added successfully',
   (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const fetchDietitianDetails = createApiThunk(
+  'fetch/dietitian-details',
+  (id) => api.get(`/fetch-user-details/${id}?type=dietitian`),
+  '',
+  (response) => response?.data?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 

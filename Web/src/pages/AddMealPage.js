@@ -14,6 +14,7 @@ import {
   Select,
   Image,
   Space,
+  Modal,
 } from 'antd';
 import { useState } from 'react';
 import {
@@ -30,6 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchSingleMealData, EditMeal } from 'src/utils/apiCalls';
 import { Stack } from '@mui/material';
+import 'src/index.css';
 
 const { Title } = Typography;
 
@@ -41,6 +43,9 @@ const AddMealPage = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const type = queryParams.get('type') || '';
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedEquipment, setSelectedEquipment] = useState(null);
 
   const MealData = useSelector((state) => state.slice.data.singlemeal);
   const ExerciseData = useSelector((state) => state.slice.data.singleExercise);
@@ -131,6 +136,16 @@ const AddMealPage = () => {
     },
   ];
 
+  const openModal = (equipment) => {
+    setSelectedEquipment(equipment);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedEquipment(null);
+    setModalVisible(false);
+  };
+
   const generateFormList = (name, labelsAndRules, inputFields) => (
     <>
       <Divider orientation="left" plain>
@@ -212,6 +227,11 @@ const AddMealPage = () => {
                 {' '}
                 + Add {name.replace(/_/g, ' ').toLowerCase()}
               </Button>
+              {type == 'Workout' && (
+                <Button type="primary" style={{ marginTop: '5px', marginLeft: '5px' }} onClick={openModal}>
+                  Manage Equipment
+                </Button>
+              )}
             </Form.Item>
           </div>
         )}
@@ -416,7 +436,7 @@ const AddMealPage = () => {
 
               {type === 'Workout' && (
                 <>
-                  <Row justify={'start'} style={{ marginTop: 20 }}>
+                  <Row justify={'start'} align={'middle'} style={{ marginTop: 20 }}>
                     <Form.Item label="Calorie Burn" name="calorie_burn" style={{ marginRight: 20 }}>
                       <Input type="number" placeholder="Enter calories" />
                     </Form.Item>
@@ -463,6 +483,132 @@ const AddMealPage = () => {
               </Form.Item>
             </Form>
           </Card>
+
+          <Modal
+            title={selectedEquipment ? 'Edit Equipment' : 'Manage Equipment'}
+            open={modalVisible}
+            onCancel={closeModal}
+            style={{ overflowY: 'scroll' }}
+            footer={null}
+            destroyOnClose
+            height={'80%'}
+          >
+            <Space direction="row" style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Input.Search placeholder="Search equipment" style={{ marginBottom: '10px' }} />
+
+              <Button
+                type="primary"
+                onClick={() => openModal(null)}
+                // icon={<PlusCircleOutlined />}
+                style={{ marginBottom: '10px' }}
+              >
+                + Add Equipment
+              </Button>
+            </Space>
+
+            <Row gutter={[16, 16]}>
+              <Col span={8}>
+                <Card
+                  cover={
+                    <img
+                      alt="Equipment 1"
+                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
+                    />
+                  }
+                  actions={[
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Edit
+                    </Button>,
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Delete
+                    </Button>,
+                  ]}
+                >
+                  <Card.Meta title="Equipment 1" />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card
+                  cover={
+                    <img
+                      alt="Equipment 2"
+                      src="https://img.freepik.com/free-photo/dumbbells-floor-gym-ai-generative_123827-23744.jpg?w=360"
+                    />
+                  }
+                  actions={[
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Edit
+                    </Button>,
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Delete
+                    </Button>,
+                  ]}
+                >
+                  <Card.Meta title="Equipment 2" />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card
+                  cover={
+                    <img
+                      alt="Equipment 3"
+                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
+                    />
+                  }
+                  actions={[
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Edit
+                    </Button>,
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Delete
+                    </Button>,
+                  ]}
+                >
+                  <Card.Meta title="Equipment 3" />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card
+                  cover={
+                    <img
+                      alt="Equipment 4"
+                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
+                    />
+                  }
+                  actions={[
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Edit
+                    </Button>,
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Delete
+                    </Button>,
+                  ]}
+                >
+                  <Card.Meta title="Equipment 4" />
+                </Card>
+              </Col>
+              <Col span={8}>
+                <Card
+                  cover={
+                    <img
+                      alt="Equipment 4"
+                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
+                    />
+                  }
+                  actions={[
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Edit
+                    </Button>,
+                    <Button type="link" onClick={() => openModal(null)}>
+                      Delete
+                    </Button>,
+                  ]}
+                >
+                  <Card.Meta title="Equipment 4" />
+                </Card>
+              </Col>
+            </Row>
+          </Modal>
         </div>
       )}
     </>
