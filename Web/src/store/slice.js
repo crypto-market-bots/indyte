@@ -14,6 +14,9 @@ import {
   fetchSingleWorkout,
   fetchCustomerDetails,
   fetchDietitianDetails,
+  fetchAllEquipment,
+  addEquipment,
+  updateEquipment,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -33,6 +36,7 @@ const initialState = {
     singleExercise: [],
     workouts: [],
     singleWorkout: [],
+    equipments: [],
   },
   loading: {
     refreshOrders: false,
@@ -40,6 +44,7 @@ const initialState = {
     singlemeal: false,
     singleExercise: false,
     singleWorkout: false,
+    addEquipment: false,
   },
 };
 
@@ -101,6 +106,21 @@ export const slice = createSlice({
       .addCase(fetchSingleWorkout.fulfilled, (state, action) => {
         state.loading.singleWorkout = false;
         state.data.singleWorkout = action.payload;
+      })
+      .addCase(fetchAllEquipment.fulfilled, (state, action) => {
+        state.data.equipments = action.payload;
+      })
+      .addCase(addEquipment.pending, (state, action) => {
+        state.loading.addEquipment = true;
+      })
+      .addCase(addEquipment.fulfilled, (state, action) => {
+        state.loading.addEquipment = false;
+      })
+      .addCase(updateEquipment.pending, (state, action) => {
+        state.loading.updateEquipment = true;
+      })
+      .addCase(updateEquipment.fulfilled, (state, action) => {
+        state.loading.updateEquipment = false;
       });
   },
 });

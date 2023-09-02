@@ -19,7 +19,7 @@ export const login = createApiThunk(
 export const fetchCustomer = createApiThunk(
   'fetch/customers',
   () => api.get('/fetch-user?type=user'),
-  'customers fetched successfully',
+  '',
   (response) => response?.data?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -27,7 +27,7 @@ export const fetchCustomer = createApiThunk(
 export const fetchCustomerDetails = createApiThunk(
   'fetch/customers-details',
   (id) => api.get(`/fetch-user-details/${id}?type=user`),
-  'customer fetched successfully',
+  '',
   (response) => response?.data?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -35,7 +35,7 @@ export const fetchCustomerDetails = createApiThunk(
 export const fetchDietitian = createApiThunk(
   'fetch/dietitians',
   () => api.get('/fetch-user?type=dietitian'),
-  'dietitians fetched successfully',
+  '',
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -50,7 +50,7 @@ export const assignDietitian = createApiThunk(
 export const getUserDetails = createApiThunk(
   'get/user',
   () => api.get('/get-user-detail'),
-  null,
+  '',
   (response) => response.data.user,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -81,7 +81,7 @@ export const addMeal = createApiThunk(
 export const fetchMeal = createApiThunk(
   'fetch/meal',
   (requestData) => api.get('/meals', requestData),
-  'Meals fetched successfully',
+  '',
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -89,7 +89,7 @@ export const fetchMeal = createApiThunk(
 export const fetchSingleMealData = createApiThunk(
   'fetch/SingleMealData',
   (id) => api.get(`/meals/${id}`),
-  'Meal fetched successfully',
+  '',
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -115,14 +115,14 @@ export const EditMeal = createApiThunk(
 export const fetchAllExercises = createApiThunk(
   'fetch/Exercise',
   (id) => api.get(`/exercises`),
-  'Exercises Fetched Successfully',
+  '',
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 export const fetchSingleExercise = createApiThunk(
   'fetch/singleExercise',
   (id) => api.get(`/exercises/${id}`),
-  'Exercise Fetched Successfully',
+  '',
   (response) => response.data?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -156,7 +156,7 @@ export const deleteExercise = createApiThunk(
 export const fetchWorkouts = createApiThunk(
   'fetch/workouts',
   () => api.get(`/workout`),
-  'Workouts fetched Successfully',
+  '',
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -164,7 +164,7 @@ export const fetchWorkouts = createApiThunk(
 export const fetchSingleWorkout = createApiThunk(
   'fetch/singleWorkouts',
   (id) => api.get(`/workout/${id}`),
-  'Workout fetched Successfully',
+  '',
   (response) => response.data.message,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
@@ -190,5 +190,33 @@ export const addWorkout = createApiThunk(
   (requestData) => api.post('/create-workout', requestData),
   'Workout Added successfully',
   (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const fetchAllEquipment = createApiThunk(
+  'fetch/all-equipment',
+  () => api.get(`/equipment`),
+  '',
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateEquipment = createApiThunk(
+  'fetch/update-equipment',
+  (req) => api.put(`/update-equipment/${req.id}`, req.formData),
+  'equipment updated',
+  (response) => response?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const addEquipment = createApiThunk(
+  'fetch/add-equipment',
+  (requestData) => api.post(`/add-equipment`, requestData),
+  'equipment added',
+  (response) => response?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const deleteEquipment = createApiThunk(
+  'delete/equipment',
+  (id) => api.delete(`/delete-equipment/${id}`),
+  'equipment deleted',
+  (response) => response?.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );

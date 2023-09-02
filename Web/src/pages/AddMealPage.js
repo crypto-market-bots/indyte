@@ -20,18 +20,26 @@ import { useState } from 'react';
 import {
   EditExercise,
   EditWorkout,
+  addEquipment,
   addExercise,
   addMeal,
   addWorkout,
+  fetchAllEquipment,
   fetchAllExercises,
   fetchSingleExercise,
   fetchSingleWorkout,
+  deleteEquipment,
+  updateEquipment,
 } from 'src/utils/apiCalls';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { fetchSingleMealData, EditMeal } from 'src/utils/apiCalls';
-import { Stack } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import 'src/index.css';
+import { object, string } from 'prop-types';
+import { DeleteOutlined } from '@mui/icons-material';
 
 const { Title } = Typography;
 
@@ -46,6 +54,8 @@ const AddMealPage = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
+  const [addedEquipmentImage, setAddedEquipmentImage] = useState(null);
+  const [addedEquipmentName, setAddedEquipmentName] = useState(null);
 
   const MealData = useSelector((state) => state.slice.data.singlemeal);
   const ExerciseData = useSelector((state) => state.slice.data.singleExercise);
@@ -54,6 +64,9 @@ const AddMealPage = () => {
   const isMealDataLoading = useSelector((state) => state.slice.loading.singlemeal);
   const isExerciseDataLoading = useSelector((state) => state.slice.loading.singleExercise);
   const isWorkoutDataLoading = useSelector((state) => state.slice.loading.singleWorkout);
+  const isAddEquipmentLoading = useSelector((state) => state.slice.loading.addEquipment);
+  const isUpdateEquipmentLoading = useSelector((state) => state.slice.loading.updateEquipment);
+  const equipments = useSelector((state) => state.slice.data.equipments);
 
   const isLoading =
     type == 'Meal'
@@ -103,6 +116,9 @@ const AddMealPage = () => {
       else if (type == 'Workout') {
         dispatch(fetchAllExercises());
         dispatch(fetchSingleWorkout(id));
+        dispatch(fetchAllEquipment()).then((res) => {
+          setEquipmentList(res.payload);
+        });
       }
     }
   }, []);
@@ -170,7 +186,7 @@ const AddMealPage = () => {
                         <Input.TextArea rows={2} placeholder={placeholder} />
                       ) : inputType === 'file' ? (
                         <>
-                          {id && initialFormValues[name][index]?.image ? (
+                          {id && initialFormValues[index]?.image ? (
                             <Space>
                               <Image
                                 width={60}
@@ -335,6 +351,92 @@ const AddMealPage = () => {
     setSelectedFile(e.target.files[0]);
   };
 
+  const [equipmentList, setEquipmentList] = useState(equipments);
+  const [editedEquipment, setEditedEquipment] = useState(null);
+  const [isAddingEquipment, setIsAddingEquipment] = useState(false);
+
+  const handleDoubleClick = (id) => {
+    const updatedEquipmentList = equipmentList.map((equipment) =>
+      equipment._id === id ? { ...equipment, isEditing: true } : { ...equipment, isEditing: false }
+    );
+    setEquipmentList(updatedEquipmentList);
+    const selectedEquipment = equipmentList.find((equipment) => equipment._id === id);
+    if (selectedEquipment) {
+      setEditedEquipment(selectedEquipment);
+    }
+  };
+
+  const handleSave = async () => {
+    if (editedEquipment) {
+      // Create a new FormData object
+      const formData = new FormData();
+      const id = editedEquipment._id;
+
+      // Loop through the editedEquipment JSON object and append key-value pairs to formData
+      for (const key in editedEquipment) {
+        formData.append(key, editedEquipment[key]);
+      }
+
+      // Manually append 'type' with the value 'web'
+      formData.append('type', 'web');
+
+      await dispatch(updateEquipment({ id, formData }));
+      await dispatch(fetchAllEquipment()).then((res) => {
+        setEquipmentList(res.payload);
+      });
+
+      setEditedEquipment(null);
+      setIsAddingEquipment(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (editedEquipment) {
+      await dispatch(fetchAllEquipment()).then((res) => {
+        setEquipmentList(res.payload);
+      });
+      setEditedEquipment(null);
+    }
+    setIsAddingEquipment(null);
+  };
+
+  const handleImageInputChange = (id, event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const updatedEquipmentList = equipmentList.map((equipment) =>
+        equipment._id === id ? { ...equipment, equipment_image: file } : equipment
+      );
+      setEquipmentList(updatedEquipmentList);
+      const selectedEquipment = updatedEquipmentList.find((equipment) => equipment._id === id);
+      console.log('selectedEquipment', selectedEquipment);
+      if (selectedEquipment) {
+        setEditedEquipment(selectedEquipment);
+      }
+    }
+  };
+
+  const handleAddEquipmentSubmit = async () => {
+    console.log('clicked');
+    const formData = new FormData();
+    formData.append('equipment_image', addedEquipmentImage);
+    formData.append('equipment_name', addedEquipmentName);
+    await dispatch(addEquipment(formData));
+    await dispatch(fetchAllEquipment()).then((res) => {
+      setEquipmentList(res.payload);
+    });
+    setAddedEquipmentImage(null);
+    setAddedEquipmentName(null);
+    setEditedEquipment(null);
+    setIsAddingEquipment(false);
+  };
+
+  const handleDeleteEquipment = async (id) => {
+    await dispatch(deleteEquipment(id));
+    await dispatch(fetchAllEquipment()).then((res) => {
+      setEquipmentList(res.payload);
+    });
+  };
+
   return (
     <>
       {isLoading ? (
@@ -485,10 +587,10 @@ const AddMealPage = () => {
           </Card>
 
           <Modal
-            title={selectedEquipment ? 'Edit Equipment' : 'Manage Equipment'}
+            title={'Manage Equipment'}
             open={modalVisible}
             onCancel={closeModal}
-            style={{ overflowY: 'scroll' }}
+            style={{ overflowY: 'auto' }}
             footer={null}
             destroyOnClose
             height={'80%'}
@@ -496,118 +598,116 @@ const AddMealPage = () => {
             <Space direction="row" style={{ display: 'flex', justifyContent: 'space-between' }}>
               <Input.Search placeholder="Search equipment" style={{ marginBottom: '10px' }} />
 
-              <Button
-                type="primary"
-                onClick={() => openModal(null)}
-                // icon={<PlusCircleOutlined />}
-                style={{ marginBottom: '10px' }}
-              >
-                + Add Equipment
-              </Button>
+              {editedEquipment ? (
+                <Space size={6}>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                  <Button loading={isUpdateEquipmentLoading} type="primary" onClick={handleSave}>
+                    Save
+                  </Button>
+                </Space>
+              ) : isAddingEquipment ? (
+                <Space size={6}>
+                  <Button onClick={handleCancel}>Cancel</Button>
+                  <Button
+                    type="primary"
+                    loading={isAddEquipmentLoading}
+                    disabled={!addedEquipmentImage || !addedEquipmentName}
+                    onClick={handleAddEquipmentSubmit}
+                  >
+                    Add
+                  </Button>
+                </Space>
+              ) : (
+                <Button type="primary" onClick={() => setIsAddingEquipment(true)}>
+                  + Add Equipment
+                </Button>
+              )}
             </Space>
 
-            <Row gutter={[16, 16]}>
-              <Col span={8}>
-                <Card
-                  cover={
-                    <img
-                      alt="Equipment 1"
-                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
-                    />
-                  }
-                  actions={[
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Edit
-                    </Button>,
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Delete
-                    </Button>,
-                  ]}
-                >
-                  <Card.Meta title="Equipment 1" />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card
-                  cover={
-                    <img
-                      alt="Equipment 2"
-                      src="https://img.freepik.com/free-photo/dumbbells-floor-gym-ai-generative_123827-23744.jpg?w=360"
-                    />
-                  }
-                  actions={[
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Edit
-                    </Button>,
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Delete
-                    </Button>,
-                  ]}
-                >
-                  <Card.Meta title="Equipment 2" />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card
-                  cover={
-                    <img
-                      alt="Equipment 3"
-                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
-                    />
-                  }
-                  actions={[
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Edit
-                    </Button>,
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Delete
-                    </Button>,
-                  ]}
-                >
-                  <Card.Meta title="Equipment 3" />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card
-                  cover={
-                    <img
-                      alt="Equipment 4"
-                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
-                    />
-                  }
-                  actions={[
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Edit
-                    </Button>,
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Delete
-                    </Button>,
-                  ]}
-                >
-                  <Card.Meta title="Equipment 4" />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card
-                  cover={
-                    <img
-                      alt="Equipment 4"
-                      src="https://media.istockphoto.com/id/1078074092/photo/dumbbell-weights-on-black-background.jpg?s=170667a&w=0&k=20&c=_1lGkzqoMX--R9FCLsBBONF9h_s4-SaYYjZRWktwMrc="
-                    />
-                  }
-                  actions={[
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Edit
-                    </Button>,
-                    <Button type="link" onClick={() => openModal(null)}>
-                      Delete
-                    </Button>,
-                  ]}
-                >
-                  <Card.Meta title="Equipment 4" />
-                </Card>
-              </Col>
-            </Row>
+            {isAddingEquipment ? ( // Conditionally render the input fields when adding equipment
+              <div>
+                <label htmlFor={`image-upload-new`} style={{ cursor: 'pointer' }}>
+                  Upload Image:
+                  <input
+                    id={`image-upload-new`}
+                    type="file"
+                    required
+                    accept="image/*"
+                    style={{ marginBottom: '10px', marginLeft: '10px' }}
+                    onChange={(e) => setAddedEquipmentImage(e.target.files[0])}
+                  />
+                </label>
+                <Input required placeholder="Equipment Name" onChange={(e) => setAddedEquipmentName(e.target.value)} />
+              </div>
+            ) : (
+              <Row gutter={[16, 16]}>
+                {equipmentList?.map((equipment) => (
+                  <Col span={8} key={equipment._id}>
+                    <Card
+                      cover={
+                        <div style={{ position: 'relative' }}>
+                          <label htmlFor={`image-upload-${equipment._id}`} style={{ cursor: 'pointer' }}>
+                            <img
+                              alt={`Equipment ${equipment._id}`}
+                              height={'100px'}
+                              width={'100%'}
+                              src={
+                                equipment._id === editedEquipment?._id &&
+                                typeof editedEquipment?.equipment_image == 'object'
+                                  ? URL.createObjectURL(editedEquipment?.equipment_image)
+                                  : equipment.equipment_image
+                              }
+                            />
+                            <input
+                              id={`image-upload-${equipment._id}`}
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={(e) => handleImageInputChange(equipment._id, e)}
+                            />
+
+                            <IconButton
+                              // onClick={() => handleDeleteEquipment(equipment._id)} // Add your delete equipment function here
+                              onClick={() => handleDeleteEquipment(equipment._id)}
+                              size="small"
+                              style={{
+                                position: 'absolute',
+                                top: '5px',
+                                right: '5px',
+                                background: 'white',
+                                border: 'none',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <DeleteOutlined />
+                            </IconButton>
+                          </label>
+                        </div>
+                      }
+                      onDoubleClick={() => handleDoubleClick(equipment._id)}
+                    >
+                      {equipment._id === editedEquipment?._id ? (
+                        <Card.Meta
+                          title={
+                            <Input
+                              size="small"
+                              placeholder="Equipment Name"
+                              onPressEnter={handleSave}
+                              value={editedEquipment?.equipment_name}
+                              onChange={(e) =>
+                                setEditedEquipment({ ...editedEquipment, equipment_name: e.target.value })
+                              }
+                            />
+                          }
+                        />
+                      ) : (
+                        <Card.Meta style={{ cursor: 'pointer' }} title={equipment.equipment_name} />
+                      )}
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            )}
           </Modal>
         </div>
       )}
