@@ -18,10 +18,7 @@ export const createApiThunk = (name, apiCall, successMessage, transformResponse,
             : successMessage
         );
       }
-
-
-      // return the response (can access with name payload)
-      return transformResponse(response);
+      if (response) return transformResponse(response);
     } catch (error) {
       const errorMessage = transformErrorMessage(error);
       //   show error message

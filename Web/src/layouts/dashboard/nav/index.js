@@ -18,7 +18,6 @@ import navConfig from './config';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetails } from 'src/utils/apiCalls';
 
-
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -39,11 +38,11 @@ Nav.propTypes = {
 };
 
 export default function Nav({ openNav, onCloseNav }) {
-
   const dispatch = useDispatch();
-  const usertype = useSelector((state) => state.slice.data.loggedInuserData.type);
+  const user = useSelector((state) => state.slice.data.loggedInuserData);
+  // console.log('usertyep', user.type);
   const navConfigAccordingToUserType =
-    usertype == 'admin' ? navConfig.admin : usertype == 'dietitian' ? navConfig.dietitian : ['Loading...'];
+    user?.type == 'admin' ? navConfig.admin : user?.type == 'dietitian' ? navConfig.dietitian : [{ title: 'Loading...' }];
 
   const { pathname } = useLocation();
 
@@ -54,7 +53,6 @@ export default function Nav({ openNav, onCloseNav }) {
       onCloseNav();
     }
     dispatch(getUserDetails());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   const renderContent = (
@@ -71,15 +69,16 @@ export default function Nav({ openNav, onCloseNav }) {
       <Box sx={{ mb: 5, mx: 2.5 }}>
         <Link underline="none">
           <StyledAccount>
-            <Avatar src={account.photoURL} alt="photoURL" />
+            <Avatar src={user.photo} alt="photoURL" />
 
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {user.first_name}
+                {user.last_name}
               </Typography>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                {account.role}
+                {user.type}
               </Typography>
             </Box>
           </StyledAccount>

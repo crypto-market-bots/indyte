@@ -14,7 +14,6 @@ export default function DietitianPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const Dietitians = useSelector((state) => state.slice.data.dietitians);
-  console.log('dietitians are ', Dietitians);
   const [filterName, setFilterName] = useState('');
   const [selected, setSelected] = useState([]);
 
@@ -22,7 +21,7 @@ export default function DietitianPage() {
     setFilterName(event.target.value);
   };
 
-  const filteredUsers = Dietitians.filter(
+  const filteredUsers = Dietitians?.filter(
     (user) => user.first_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
   );
 

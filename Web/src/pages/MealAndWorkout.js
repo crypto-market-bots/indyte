@@ -192,10 +192,16 @@ const MealAndWorkout = () => {
         <Col span={2}>
           <IconButton
             className="custom-button"
-            sx={{ backgroundColor: '#1890ff', color: '#fff', borderRadius: '5px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}
-            onClick={() => navigate('add-item')}
+            sx={{
+              backgroundColor: '#1890ff',
+              color: '#fff',
+              borderRadius: '5px',
+
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            }}
+            onClick={() => navigate('manage-meal')}
           >
-            Add <Add />
+            Manage Meal
           </IconButton>
         </Col>
       </Row>
@@ -243,7 +249,7 @@ const MealAndWorkout = () => {
                 <Text>3 meals per day</Text>
               </div>
             </div>
-            <Box display="flex" justifyContent={'center'}>
+            <Box display="flex" justifyContent={'space-around'}>
               <IconButton
                 className="custom-button"
                 onClick={() => navigate('/dashboard/history')}
@@ -255,6 +261,19 @@ const MealAndWorkout = () => {
                 }}
               >
                 View History <History />
+              </IconButton>
+              <IconButton
+                className="custom-button"
+                sx={{
+                  backgroundColor: '#1890ff',
+                  color: '#fff',
+                  borderRadius: '5px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                }}
+                onClick={() => navigate('add-item')}
+              >
+                Add Meal
+                <Add />
               </IconButton>
             </Box>
           </Card>
