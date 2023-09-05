@@ -17,6 +17,7 @@ import {
   fetchAllEquipment,
   addEquipment,
   updateEquipment,
+  fetchUserMealRecommendation,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -37,6 +38,7 @@ const initialState = {
     workouts: [],
     singleWorkout: [],
     equipments: [],
+    userMealRecommendation: [],
   },
   loading: {
     refreshOrders: false,
@@ -121,6 +123,10 @@ export const slice = createSlice({
       })
       .addCase(updateEquipment.fulfilled, (state, action) => {
         state.loading.updateEquipment = false;
+      })
+      .addCase(fetchUserMealRecommendation.fulfilled, (state, action) => {
+        console.log('action paylaod ', action.payload);
+        state.data.userMealRecommendation = action.payload;
       });
   },
 });

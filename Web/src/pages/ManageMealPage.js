@@ -50,10 +50,10 @@ const ManageMealPage = ({ type }) => {
   const data = type === 'Meal' || !type ? mealData : type == 'Exercise' ? exercisesData : workoutsData;
   console.log('data', !type);
 
-  const filteredData = data.filter((item) => {
+  const filteredData = data?.filter((item) => {
     return (
-      item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchValue.toLowerCase())
+      item?.name?.toLowerCase().includes(searchValue?.toLowerCase()) ||
+      item?.description?.toLowerCase().includes(searchValue?.toLowerCase())
     );
   });
 
