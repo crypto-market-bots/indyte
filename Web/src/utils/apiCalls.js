@@ -105,7 +105,7 @@ export const deleteMeal = createApiThunk(
 export const EditMeal = createApiThunk(
   'Edit/SingleMealData',
   (requestData) => {
-    api.put(`/update-meal/${requestData.id}`, requestData);
+    api.put(`/update-meal/${requestData.id}`, requestData.formData);
   },
   'Meal Edited successfully',
   (response) => response.data,

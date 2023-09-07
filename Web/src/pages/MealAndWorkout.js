@@ -51,8 +51,6 @@ const MealAndWorkout = () => {
   let customerDetails = useSelector((state) => state.slice.data.customerDetails);
   customerDetails = customerDetails[0];
   const userMealRecommendation = useSelector((state) => state.slice.data.userMealRecommendation);
-  console.log('userMealRecommendation', userMealRecommendation);
-
   // const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
   const options = customers.map((customer, index) => {
     return {
@@ -119,7 +117,7 @@ const MealAndWorkout = () => {
   };
 
   const handleMealSelectChange = (value) => {
-    const selectedMeal = meals.find((meal) => meal.name === value);
+    const selectedMeal = meals?.find((meal) => meal.name === value);
 
     // Check if the selectedMeal exists and has an _id property
     if (selectedMeal && selectedMeal._id) {
@@ -170,9 +168,21 @@ const MealAndWorkout = () => {
               >
                 {meals?.map((meal, index) => (
                   <Select.Option key={index} value={meal.name}>
-                    <Stack alignItems={'center'} direction={'row'} justifyContent={'space-between'}>
-                      <Image width={20} height={20} style={{ borderRadius: '50%' }} src={meal.image} />{' '}
-                      <span>{meal.name}</span>
+                    <Stack direction={'row'} alignItems={'center'}>
+                      <Image
+                        src={meal.meal_image}
+                        alt={meal.name}
+                        style={{
+                          width: 'auto',
+                          height: 'auto',
+                          objectFit: 'contain', // This property ensures that the image covers its container without stretching
+                          maxWidth: '30px', // Set a maximum width to prevent the image from exceeding a certain size
+                          maxHeight: '30px', // Set a maximum height to prevent the image from exceeding a certain size
+                          marginRight: '8px',
+                          borderRadius: '10%',
+                        }}
+                      />
+                      <Typography.Text>{meal.name}</Typography.Text>
                     </Stack>
                   </Select.Option>
                 ))}
@@ -305,7 +315,7 @@ const MealAndWorkout = () => {
             title="Meal Update"
             list={userMealRecommendation?.map((item, index) => ({
               id: item._id,
-              image: item.meal.image,
+              image: item.meal?.meal_image || '',
               foodName: item.meal.name,
               mealType: item.meal_period,
               quantity: `${item.quantity.value} ${item.quantity.type}`,

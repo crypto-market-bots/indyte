@@ -83,7 +83,7 @@ const AddMealPage = () => {
 
     initialFormValues =
       type === 'Meal'
-        ? { ...MealData, type }
+        ? { ...MealData, type, image: MealData.meal_image }
         : type === 'Exercise'
         ? { ...ExerciseData, type }
         : type === 'Workout'
@@ -93,17 +93,28 @@ const AddMealPage = () => {
 
   const onFinish = (values) => {
     // For Add
+    if (type === 'Meal') {
+      const formData = new FormData();
+      for (const key in values) {
+        if (values.hasOwnProperty(key)) {
+          if (key == 'nutritions' || key == 'required_ingredients' || key == 'steps') {
+            formData.append(key, JSON.stringify(values[key]));
+          } else formData.append(key, values[key]);
+        }
+      }
+      formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
+      if (!id) dispatch(addMeal(formData));
+      else dispatch(EditMeal({ id, formData }));
+    }
     if (!id) {
-      if (type === 'Meal') dispatch(addMeal(values));
-      else if (type === 'Exercise') dispatch(addExercise(values));
+      if (type === 'Exercise') dispatch(addExercise(values));
       else if (type === 'Workout') dispatch(addWorkout(values));
     }
     // For Edit
     else {
       values = { ...values, type: type, image: selectedFile ? selectedFile : initialFormValues.image };
 
-      if (type === 'Meal' && id) dispatch(EditMeal({ id, ...values }));
-      else if (type === 'Exercise' && id) dispatch(EditExercise({ id, ...values }));
+      if (type === 'Exercise' && id) dispatch(EditExercise({ id, ...values }));
       else if (type === 'Workout' && id) dispatch(EditWorkout({ id, ...values }));
     }
   };
@@ -349,6 +360,7 @@ const AddMealPage = () => {
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
+    console.log(e.target.files[0], 'file');
   };
 
   const [equipmentList, setEquipmentList] = useState(equipments);
