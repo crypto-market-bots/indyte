@@ -17,6 +17,8 @@ import {
   fetchAllEquipment,
   addEquipment,
   updateEquipment,
+  fetchUserMealRecommendation,
+  addMeal,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -37,8 +39,10 @@ const initialState = {
     workouts: [],
     singleWorkout: [],
     equipments: [],
+    userMealRecommendation: [],
   },
   loading: {
+    addMeal: false,
     refreshOrders: false,
     login: false,
     singlemeal: false,
@@ -79,6 +83,12 @@ export const slice = createSlice({
       })
       .addCase(fetchMeal.fulfilled, (state, action) => {
         state.data.meals = action.payload;
+      })
+      .addCase(addMeal.fulfilled, (state, action) => {
+        state.loading.addMeal = false;
+      })
+      .addCase(addMeal.pending, (state, action) => {
+        state.loading.addMeal = true;
       })
       .addCase(fetchSingleMealData.pending, (state, action) => {
         state.loading.singlemeal = true;
@@ -121,6 +131,10 @@ export const slice = createSlice({
       })
       .addCase(updateEquipment.fulfilled, (state, action) => {
         state.loading.updateEquipment = false;
+      })
+      .addCase(fetchUserMealRecommendation.fulfilled, (state, action) => {
+        console.log('action paylaod ', action.payload);
+        state.data.userMealRecommendation = action.payload;
       });
   },
 });

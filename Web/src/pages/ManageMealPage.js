@@ -50,10 +50,10 @@ const ManageMealPage = ({ type }) => {
   const data = type === 'Meal' || !type ? mealData : type == 'Exercise' ? exercisesData : workoutsData;
   console.log('data', !type);
 
-  const filteredData = data.filter((item) => {
+  const filteredData = data?.filter((item) => {
     return (
-      item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
-      item.description.toLowerCase().includes(searchValue.toLowerCase())
+      item?.name?.toLowerCase().includes(searchValue?.toLowerCase()) ||
+      item?.description?.toLowerCase().includes(searchValue?.toLowerCase())
     );
   });
 
@@ -114,12 +114,18 @@ const ManageMealPage = ({ type }) => {
         </Button>
       </div>
       <Row gutter={[16, 16]}>
-        {!filteredData.length && 'No Meal Found'}
-        {filteredData.map((item) => (
+        {!filteredData?.length && 'No Meal Found'}
+        {filteredData?.map((item) => (
           <Col key={item._id} xs={24} sm={12} md={6} xxl={5} style={{ gap: 10 }}>
             <Card
               style={{ width: 250, marginRight: 2, boxShadow: '100px' }}
-              cover={<img alt="example" src={item.image} style={{ height: '200px', objectFit: 'cover' }} />} // Set the image height and object-fit
+              cover={
+                <img
+                  alt="example"
+                  src={type == 'Meal' ? item.meal_image : item.image}
+                  style={{ height: '200px', objectFit: 'cover' }}
+                />
+              } // Set the image height and object-fit
               actions={[
                 <Button onClick={() => handleEditClick(item._id)} key="edit">
                   Edit

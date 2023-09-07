@@ -6,11 +6,9 @@ export const createApiThunk = (name, apiCall, successMessage, transformResponse,
   createAsyncThunk(name, async (requestData) => {
     try {
       // call the api with requested data
-
       const response = await apiCall(requestData);
 
       // show success message
-
       if (successMessage) {
         showSuccessNotification(
           typeof successMessage === 'function'
@@ -21,6 +19,7 @@ export const createApiThunk = (name, apiCall, successMessage, transformResponse,
       if (response) return transformResponse(response);
     } catch (error) {
       const errorMessage = transformErrorMessage(error);
+      console.log('errorMessage', errorMessage);
       //   show error message
       showErrorNotification(errorMessage);
       //   return the error response
