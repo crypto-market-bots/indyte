@@ -49,7 +49,7 @@ export const assignDietitian = createApiThunk(
 
 export const getUserDetails = createApiThunk(
   'get/user',
-  () => api.get('/get-user-detail'),
+  () => api.get('/get-detail?from=ss'),
   '',
   (response) => response.data.user,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
