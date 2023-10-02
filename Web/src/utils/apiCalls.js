@@ -237,3 +237,20 @@ export const addUserMealRecommendation = createApiThunk(
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+
+export const fetchUserWorkoutRecommendation = createApiThunk(
+  'fetch/UserWorkoutRecommendation',
+  (reqData) =>
+    api.get(`/fetch-user-workout-recommendation/${reqData.user_id}?type=${reqData.type}&value=${reqData.date}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.error ?? error.message ?? 'An error occurred.'
+);
+
+export const addUserWorkoutRecommendation = createApiThunk(
+  'add/UserWorkoutRecommendation',
+  (payload) => api.post(`/new-user-workout-recommendation`, payload),
+  'Workout Assigned Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Card,
@@ -27,7 +27,7 @@ import {
 
 import { Link } from 'react-router-dom';
 // components
-import { AutoComplete, Col, Input, Row, Segmented, Select } from 'antd';
+import { AutoComplete, Col, DatePicker, Input, Row, Segmented, Select } from 'antd';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -35,7 +35,9 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 import USERLIST from '../_mock/user';
-
+import { CloseSquareFilled } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCustomer, fetchCustomerDetails } from 'src/utils/apiCalls';
 // ----------------------------------------------------------------------
 const TABLE_HEAD = [
   { id: 'name', label: 'Diet', alignRight: false },
@@ -83,7 +85,7 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
+// const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
 
 const DIETICIANS = [
   'Dietician 1',
@@ -113,6 +115,29 @@ export default function HistoryPage() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [selectedType, setSelectedType] = useState('Meal');
+
+  const customers = useSelector((state) => state.slice.data.customers);
+
+  const dispatch = useDispatch();
+
+  const options = customers.map((customer, index) => {
+    return {
+      value: `${customer.first_name} ${customer.last_name}`,
+      image: customer.image,
+      customerId: customer._id,
+    };
+  });
+
+  useEffect(() => {
+    dispatch(fetchCustomer());
+  }, []);
+
+  const handleSegmentedChange = (selectedOption) => {
+    setSelectedType(selectedOption);
+    console.log('type ', selectedOption);
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -182,6 +207,27 @@ export default function HistoryPage() {
     setOpenFilter(null);
   };
 
+  const [selectedValues, setSelectedValues] = useState({
+    user: null,
+    date: null,
+  });
+
+  const handleSelect = async (value, option) => {
+    if (option && option.customerId) {
+      setSelectedValues({ ...selectedValues, user: option.customerId });
+      await dispatch(fetchCustomerDetails(option.customerId));
+      // dispatch(fetchUserMealRecommendation(option.customerId));
+      // dispatch(fetchUserWorkoutRecommendation({ user_id: option.customerId, type: 'all', date: date.workout }));
+    }
+  };
+
+  const handleSelectChange = (key, value) => {
+    setSelectedValues({
+      ...selectedValues,
+      [key]: value,
+    });
+  };
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
   const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
@@ -195,30 +241,39 @@ export default function HistoryPage() {
       </Helmet>
 
       <Container>
-        <Row style={{ marginBottom: 20, display: 'flex', alignItems: 'center' }}>
-          <Col span={5}>
-            {' '}
-            <Segmented options={['Meal', 'Workout']} />
+        <Segmented size="large" block options={['Meal', 'Workout']} onChange={handleSegmentedChange} />
+        <Row style={{ margin: '10px 0px', gap: '10px', display: 'flex' }}>
+          <Col span={6}>
+            <AutoComplete
+              // popupClassName="certain-category-search-dropdown"
+              style={{ width: '100%' }}
+              options={options?.map((option, index) => ({
+                value: option.value,
+                label: (
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Avatar src={option.image} style={{ marginRight: '10px' }} /> {option.value}
+                  </div>
+                ),
+                customerId: option.customerId,
+              }))}
+              filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+              onSelect={handleSelect}
+              allowClear={{ clearIcon: <CloseSquareFilled /> }}
+            >
+              <Input size="medium" placeholder="Search here" />
+            </AutoComplete>
           </Col>
-          {/* <Col span={8}>
-                <AutoComplete
-                    popupClassName="certain-category-search-dropdown"
-                    style={{
-                        width: 250,
-                    }}
-                    options={options}
-                >
-                    <Input.Search size="large" placeholder="Search User" />
-                </AutoComplete>
-            </Col> */}
           <Col>
-            <Select placeholder="Meal" style={{ width: 150 }}>
+            <Select placeholder="Meal" size="middle" style={{ width: 150 }}>
               <Select.Option value="Meal">Meal</Select.Option>
               <Select.Option value="Workout">Workout</Select.Option>
               <Select.Option value="Sleep">Sleep</Select.Option>
               <Select.Option value="Water">Water</Select.Option>
               <Select.Option value="Step">Step</Select.Option>
             </Select>
+          </Col>
+          <Col>
+            <DatePicker onChange={(date) => handleSelectChange('date', date)} value={selectedValues.date} />
           </Col>
         </Row>
 
