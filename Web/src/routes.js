@@ -28,12 +28,12 @@ import Templates from './pages/Templates';
 
 export default function Router() {
   const [route, setRoute] = useState('/dashboard/app');
-  useEffect(() => {
-    const login = localStorage.getItem('token');
-    if (!login) {
-      setRoute('/login');
-    }
-  });
+  // useEffect(() => {
+  //   const login = localStorage.getItem('token');
+  //   if (!login) {
+  //     setRoute('/login');
+  //   }
+  // });
 
   const routes = useRoutes([
     {

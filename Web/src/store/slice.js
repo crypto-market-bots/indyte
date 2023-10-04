@@ -20,6 +20,7 @@ import {
   fetchUserMealRecommendation,
   addMeal,
   fetchUserWorkoutRecommendation,
+  fetchHistory,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -27,6 +28,7 @@ const initialState = {
     login: false,
   },
   data: {
+    history: [],
     login: [],
     customers: [],
     customerDetails: [],
@@ -51,6 +53,7 @@ const initialState = {
     singleExercise: false,
     singleWorkout: false,
     addEquipment: false,
+    history: false,
   },
 };
 
@@ -140,7 +143,17 @@ export const slice = createSlice({
       .addCase(fetchUserWorkoutRecommendation.fulfilled, (state, action) => {
         console.log('action paylaod ', action.payload);
         state.data.userWorkoutRecommendation = action.payload;
+      })
+      .addCase(fetchHistory.pending, (state, action) => {
+        state.loading.history = true;
+      })
+      .addCase(fetchHistory.fulfilled, (state, action) => {
+        state.data.history = action.payload;
+        state.loading.history = false;
       });
+    // .addCase(fetchHistory.rejected, (state, action) => {
+    //   state.loading.history = false;
+    // });
   },
 });
 

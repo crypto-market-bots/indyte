@@ -15,14 +15,15 @@ HealthSnapshot.propTypes = {
   list: PropTypes.array.isRequired,
 };
 
-export default function HealthSnapshot({ title, date, filterResult, subheader, list, isEmpty, ...other }) {
+export default function HealthSnapshot({ title, date, filterResult, isDisabled, subheader, list, isEmpty, ...other }) {
   return (
     <Card {...other}>
+      {console.log('date is', date)}
       <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mr={3}>
         <CardHeader title={title} subheader={subheader} />
         <DatePicker
           size={8}
-          // value={date ? new Date(date) : null}
+          disabled={isDisabled}
           onChange={(selectedDate) => {
             console.log('selected date', selectedDate);
             if (selectedDate) {

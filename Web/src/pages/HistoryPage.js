@@ -27,7 +27,7 @@ import {
 
 import { Link } from 'react-router-dom';
 // components
-import { AutoComplete, Col, DatePicker, Input, Row, Segmented, Select } from 'antd';
+import { AutoComplete, Col, DatePicker, Empty, Input, Row, Segmented, Select, Spin, Tag } from 'antd';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -37,16 +37,8 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 import { CloseSquareFilled } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomer, fetchCustomerDetails } from 'src/utils/apiCalls';
+import { fetchCustomer, fetchCustomerDetails, fetchHistory } from 'src/utils/apiCalls';
 // ----------------------------------------------------------------------
-const TABLE_HEAD = [
-  { id: 'name', label: 'Diet', alignRight: false },
-  { id: 'company', label: 'Quantity', alignRight: false },
-  { id: 'phoneNumber', label: 'Meal Type', alignRight: false },
-  { id: 'isVerified', label: 'Date', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
-  { id: '' },
-];
 
 // ----------------------------------------------------------------------
 
@@ -85,21 +77,9 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-// const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
-
-const DIETICIANS = [
-  'Dietician 1',
-  'Dietician 2',
-  'Dietician 3',
-  // Add more Dietician options as needed
-];
 const GOALS = ['Weight Loss', 'Weight Gain'];
 
 export default function HistoryPage() {
-  const [selectedGoal, setSelectedGoal] = useState('');
-
-  const [selectedDietician, setSelectedDietician] = useState('');
-
   const [open, setOpen] = useState(null);
 
   const [openFilter, setOpenFilter] = useState(null);
@@ -114,19 +94,64 @@ export default function HistoryPage() {
 
   const [filterName, setFilterName] = useState('');
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const history = useSelector((state) => state.slice.data.history?.data);
 
-  const [selectedType, setSelectedType] = useState('Meal');
+  const [filteredHistory, setFilteredHistory] = useState(history);
+  console.log('top filter is ', filteredHistory);
+
+  const [perPage, setPerPage] = useState(5);
 
   const customers = useSelector((state) => state.slice.data.customers);
 
+  const isHistoryLoading = useSelector((state) => state.slice.loading.history);
+  const totalValueInHistory = useSelector((state) => state.slice.data.history?.length);
+
+  const [selectedValues, setSelectedValues] = useState({
+    user: null,
+    date: null,
+    type: 'meal',
+  });
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    callHistoryApi();
+  }, [selectedValues, page, perPage]);
+
+  const callHistoryApi = async () => {
+    if (selectedValues.user) {
+      const payload = { user_id: selectedValues.user, type: selectedValues.type };
+      await dispatch(fetchHistory({ page: page + 1, perPage, payload })).then((action) =>
+        setFilteredHistory(action.payload.data)
+      );
+    }
+  };
+
+  const TABLE_HEAD =
+    selectedValues.type === 'meal'
+      ? [
+          { id: 'name', label: 'Diet', alignRight: false },
+          { id: 'quantity', label: 'Quantity', alignRight: false },
+          { id: 'mealtype', label: 'Meal Type', alignRight: false },
+          { id: 'date', label: 'Date', alignRight: false },
+          { id: 'status', label: 'Status', alignRight: false },
+          { id: '' },
+        ]
+      : [
+          { id: 'name', label: 'Workout', alignRight: false },
+          { id: 'difficulty', label: 'Difficulty', alignRight: false },
+          { id: 'date', label: 'Date', alignRight: false },
+          { id: 'status', label: 'Status', alignRight: false },
+          { id: '' },
+        ];
 
   const options = customers.map((customer, index) => {
     return {
       value: `${customer.first_name} ${customer.last_name}`,
       image: customer.image,
       customerId: customer._id,
+      height: customer.height,
+      weight: customer.weight,
     };
   });
 
@@ -134,23 +159,10 @@ export default function HistoryPage() {
     dispatch(fetchCustomer());
   }, []);
 
-  const handleSegmentedChange = (selectedOption) => {
-    setSelectedType(selectedOption);
-    console.log('type ', selectedOption);
-  };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
-  };
-
-  const handleSelectDietician = (event) => {
-    setSelectedDietician(event.target.value);
-  };
-
-  const handleSelectGoal = (event) => {
-    setSelectedGoal(event.target.value);
   };
 
   const handleSelectAllClick = (event) => {
@@ -178,17 +190,30 @@ export default function HistoryPage() {
   };
 
   const handleChangePage = (event, newPage) => {
+    console.log('event');
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setPage(0);
-    setRowsPerPage(parseInt(event.target.value, 10));
+    setPerPage(parseInt(event.target.value, 10));
   };
 
-  const handleFilterByName = (event) => {
+  const searchFilter = (event) => {
     setPage(0);
-    setFilterName(event.target.value);
+    const nameToFilter = event.target.value.toLowerCase();
+
+    const filterResult = history?.filter((item) => {
+      // Check if the item's name or formatted date includes the input
+      return (
+        item?.meal?.name.toLowerCase().includes(nameToFilter) ||
+        item?.workout_id?.name.toLowerCase().includes(nameToFilter) ||
+        String(formatDate(item?.date)).toLocaleLowerCase().includes(nameToFilter)
+      );
+    });
+
+    setFilterName(nameToFilter);
+    setFilteredHistory(filterResult);
   };
 
   const handleOpenMenu = (event) => {
@@ -207,17 +232,9 @@ export default function HistoryPage() {
     setOpenFilter(null);
   };
 
-  const [selectedValues, setSelectedValues] = useState({
-    user: null,
-    date: null,
-  });
-
   const handleSelect = async (value, option) => {
     if (option && option.customerId) {
       setSelectedValues({ ...selectedValues, user: option.customerId });
-      await dispatch(fetchCustomerDetails(option.customerId));
-      // dispatch(fetchUserMealRecommendation(option.customerId));
-      // dispatch(fetchUserWorkoutRecommendation({ user_id: option.customerId, type: 'all', date: date.workout }));
     }
   };
 
@@ -228,11 +245,13 @@ export default function HistoryPage() {
     });
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
+  // const emptyRows = page > 0 ? Math.max(0, (1 + page) * perPage - Totalpage) : 0;
 
-  const filteredUsers = applySortFilter(USERLIST, getComparator(order, orderBy), filterName);
-
-  const isNotFound = !filteredUsers.length && !!filterName;
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', options);
+  }
 
   return (
     <>
@@ -241,145 +260,203 @@ export default function HistoryPage() {
       </Helmet>
 
       <Container>
-        <Segmented size="large" block options={['Meal', 'Workout']} onChange={handleSegmentedChange} />
         <Row style={{ margin: '10px 0px', gap: '10px', display: 'flex' }}>
-          <Col span={6}>
+          <Col>
             <AutoComplete
-              // popupClassName="certain-category-search-dropdown"
-              style={{ width: '100%' }}
+              popupClassName="certain-category-search-dropdown"
+              style={{ width: '100%', minWidth: 350, maxWidth: 500 }}
               options={options?.map((option, index) => ({
                 value: option.value,
                 label: (
                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <Avatar src={option.image} style={{ marginRight: '10px' }} /> {option.value}
+                    <Avatar src={option.image} style={{ marginRight: '10px' }} /> {option.value}{' '}
+                    <div>
+                      <b>&nbsp; w</b>
+                      {`: ${option.weight}kg `}
+                      <b>h</b>
+                      {`: ${option.height}ft`}
+                    </div>
                   </div>
                 ),
                 customerId: option.customerId,
               }))}
               filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
               onSelect={handleSelect}
-              allowClear={{ clearIcon: <CloseSquareFilled /> }}
+              size="large"
             >
-              <Input size="medium" placeholder="Search here" />
+              <Input.Search
+                allowClear={{ clearIcon: <CloseSquareFilled /> }}
+                onChange={(e) => e.target.value == '' && setSelectedValues({ ...selectedValues, user: null })}
+                enterButton
+                size="large"
+                placeholder="Search User..."
+              />
             </AutoComplete>
           </Col>
           <Col>
-            <Select placeholder="Meal" size="middle" style={{ width: 150 }}>
-              <Select.Option value="Meal">Meal</Select.Option>
-              <Select.Option value="Workout">Workout</Select.Option>
-              <Select.Option value="Sleep">Sleep</Select.Option>
-              <Select.Option value="Water">Water</Select.Option>
-              <Select.Option value="Step">Step</Select.Option>
+            <Select
+              placeholder="select type"
+              size="large"
+              defaultValue={'meal'}
+              value={selectedValues.type}
+              disabled={!selectedValues.user}
+              onChange={(value) => {
+                setSelectedValues({ ...selectedValues, type: value });
+              }}
+              // style={{ width: '100%' }}
+            >
+              <Select.Option value="meal">Meal</Select.Option>
+              <Select.Option value="workout">Workout</Select.Option>
             </Select>
           </Col>
-          <Col>
+          {/* <Col span={5}>
             <DatePicker onChange={(date) => handleSelectChange('date', date)} value={selectedValues.date} />
-          </Col>
+          </Col> */}
         </Row>
 
         <Card>
           <UserListToolbar
             numSelected={selected.length}
+            history={history}
             filterName={filterName}
-            onFilterName={handleFilterByName}
+            onFilterName={searchFilter}
             openMenu={handleOpenFilter}
           />
 
           <Scrollbar>
-            <TableContainer sx={{ minWidth: 800 }}>
-              <Table>
-                <UserListHead
-                  order={order}
-                  orderBy={orderBy}
-                  headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
-                />
-                <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, status, company, avatarUrl, isVerified, phoneNumber, goal } = row;
-                    const selectedUser = selected.indexOf(name) !== -1;
-
-                    return (
-                      <TableRow hover key={id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, name)} />
-                        </TableCell>
-
-                        <TableCell component="th" scope="row" padding="none">
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={name} src={avatarUrl} />
-                            <Typography
-                              variant="subtitle2"
-                              style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                              noWrap
-                              component={Link}
-                              to={`/dashboard/user/customer/id`}
-                            >
-                              {name}
+            <Spin spinning={isHistoryLoading}>
+              <TableContainer sx={{ minWidth: 800 }}>
+                <Table>
+                  <UserListHead
+                    order={order}
+                    orderBy={orderBy}
+                    headLabel={TABLE_HEAD}
+                    rowCount={USERLIST.length}
+                    numSelected={selected.length}
+                    onRequestSort={handleRequestSort}
+                    onSelectAllClick={handleSelectAllClick}
+                  />
+                  {selectedValues.user == null || !history?.length ? (
+                    <TableBody>
+                      <TableRow>
+                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                          <Paper
+                            sx={{
+                              textAlign: 'center',
+                            }}
+                          >
+                            <Typography variant="h6" paragraph>
+                              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                             </Typography>
-                          </Stack>
-                        </TableCell>
-
-                        <TableCell align="left">{company}</TableCell>
-
-                        <TableCell align="left">{phoneNumber}</TableCell>
-
-                        <TableCell align="left">{goal}</TableCell>
-
-                        <TableCell align="left">
-                          <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label>
-                        </TableCell>
-
-                        <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                            <Iconify icon={'eva:more-vertical-fill'} />
-                          </IconButton>
+                          </Paper>
                         </TableCell>
                       </TableRow>
-                    );
-                  })}
-                  {emptyRows > 0 && (
-                    <TableRow style={{ height: 53 * emptyRows }}>
-                      <TableCell colSpan={6} />
-                    </TableRow>
+                    </TableBody>
+                  ) : (
+                    <TableBody>
+                      {filteredHistory?.map((item) => {
+                        const selectedUser = selected.indexOf(item?.meal?.name) !== -1;
+
+                        return (
+                          <TableRow hover key={item?._id} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <>
+                              {selectedValues.type == 'meal' ? (
+                                <>
+                                  <TableCell padding="checkbox">
+                                    <Checkbox
+                                      checked={selectedUser}
+                                      onChange={(event) => handleClick(event, item?.meal?.name)}
+                                    />
+                                  </TableCell>
+
+                                  <TableCell component="th" scope="row" padding="none">
+                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                      <Avatar alt={item?.meal?.name} src={item?.meal?.meal_image} />
+                                      <Typography
+                                        variant="subtitle2"
+                                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                                        noWrap
+                                        component={Link}
+                                        to={`/dashboard/user/customer/id`}
+                                      >
+                                        {item?.meal?.name}
+                                      </Typography>
+                                    </Stack>
+                                  </TableCell>
+
+                                  <TableCell align="left">
+                                    {item?.quantity?.value + ' ' + item?.quantity?.type}
+                                  </TableCell>
+
+                                  <TableCell align="left">{item?.meal_period}</TableCell>
+                                </>
+                              ) : (
+                                <>
+                                  <TableCell padding="checkbox">
+                                    <Checkbox
+                                      checked={selectedUser}
+                                      onChange={(event) => handleClick(event, item?.workout_id?.name)}
+                                    />
+                                  </TableCell>
+
+                                  <TableCell component="th" scope="row" padding="none">
+                                    <Stack direction="row" alignItems="center" spacing={2}>
+                                      <Avatar alt={item?.workout_id?.name} src={item?.workout_id?.image} />
+                                      <Typography
+                                        variant="subtitle2"
+                                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                                        noWrap
+                                        component={Link}
+                                        to={`/dashboard/user/customer/id`}
+                                      >
+                                        {item?.workout_id?.name}
+                                      </Typography>
+                                    </Stack>
+                                  </TableCell>
+
+                                  <TableCell align="left">{item?.difficulty}</TableCell>
+                                </>
+                              )}
+                            </>
+
+                            <TableCell align="left">{formatDate(item?.date)}</TableCell>
+                            <TableCell align="left">
+                              {!item?.user_picked && !item?.user_skip ? (
+                                <Tag color="yellow">{'pending'}</Tag>
+                              ) : item?.user_skip ? (
+                                <Tag color="red">{'skipped'}</Tag>
+                              ) : (
+                                item?.user_picked && <Tag color="green">{'consumed'}</Tag>
+                              )}
+                              {/* <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label> */}
+                            </TableCell>
+
+                            <TableCell align="right">
+                              <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                                <Iconify icon={'eva:more-vertical-fill'} />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+
+                      {/* {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={6} />
+                        </TableRow>
+                      )} */}
+                    </TableBody>
                   )}
-                </TableBody>
-
-                {isNotFound && (
-                  <TableBody>
-                    <TableRow>
-                      <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                        <Paper
-                          sx={{
-                            textAlign: 'center',
-                          }}
-                        >
-                          <Typography variant="h6" paragraph>
-                            Not found
-                          </Typography>
-
-                          <Typography variant="body2">
-                            No results found for &nbsp;
-                            <strong>&quot;{filterName}&quot;</strong>.
-                            <br /> Try checking for typos or using complete words.
-                          </Typography>
-                        </Paper>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
+                </Table>
+              </TableContainer>
+            </Spin>
           </Scrollbar>
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
-            rowsPerPage={rowsPerPage}
+            count={totalValueInHistory}
+            rowsPerPage={perPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}

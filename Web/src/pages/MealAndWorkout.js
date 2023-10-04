@@ -54,21 +54,15 @@ const MealAndWorkout = () => {
   const workouts = useSelector((state) => state.slice.data.workouts);
   console.log('workout', workouts, 'meals', meals);
   let customerDetails = useSelector((state) => state.slice.data.customerDetails);
-  customerDetails = customerDetails[0];
+  // customerDetails = customerDetails[0];
   const userMealRecommendation = useSelector((state) => state.slice.data.userMealRecommendation);
+  console.log('user meal recoomendation ', userMealRecommendation);
   const userWorkoutRecommendation = useSelector((state) => state.slice.data.userWorkoutRecommendation);
   const [date, setDate] = useState({
     workout: new Date(),
     meal: new Date(),
   });
-  console.log(
-    'user meal recommenndation',
-    userMealRecommendation,
-    'user workout recommendation ',
-    userWorkoutRecommendation
-  );
-  // const options = [{ value: 'Vishnu' }, { value: 'Lakshay' }, { value: 'Mohit' }, { value: 'Deepak' }];
-  const options = customers.map((customer, index) => {
+  const options = customers?.map((customer, index) => {
     return {
       value: `${customer.first_name} ${customer.last_name}`,
       image: customer.image,
@@ -119,7 +113,16 @@ const MealAndWorkout = () => {
       date: selectedValues.date,
     };
     await dispatch(addUserMealRecommendation(payload));
-    dispatch(fetchUserMealRecommendation(payload.user_id));
+    const formattedDate = formatDate(selectedValues.date);
+    dispatch(fetchUserMealRecommendation({ user_id: payload.user_id, type: 'date', date: formattedDate }));
+  };
+
+  const formatDate = (date) => {
+    const selectedDate = new Date(date);
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const addWorkout = async () => {
@@ -144,7 +147,7 @@ const MealAndWorkout = () => {
     if (option && option.customerId) {
       setSelectedValues({ ...selectedValues, user: option.customerId });
       await dispatch(fetchCustomerDetails(option.customerId));
-      dispatch(fetchUserMealRecommendation(option.customerId));
+      dispatch(fetchUserMealRecommendation({ user_id: option.customerId, type: 'all', date: date.meal }));
       dispatch(fetchUserWorkoutRecommendation({ user_id: option.customerId, type: 'all', date: date.workout }));
     }
   };
@@ -174,6 +177,13 @@ const MealAndWorkout = () => {
     console.log('type ', selectedOption);
   };
 
+  const handleSetMealDate = async (selectedDate, formattedDate) => {
+    setDate({ ...date, meal: selectedDate });
+    if (selectedDate)
+      await dispatch(fetchUserMealRecommendation({ user_id: selectedValues.user, type: 'date', date: formattedDate }));
+    else
+      await dispatch(fetchUserMealRecommendation({ user_id: selectedValues.user, type: 'all', date: formattedDate }));
+  };
   const handleSetWorkoutDate = async (selectedDate, formattedDate) => {
     console.log('selected date is ', selectedDate);
     setDate({ ...date, workout: selectedDate });
@@ -276,7 +286,10 @@ const MealAndWorkout = () => {
                 <Button
                   type="primary"
                   disabled={
-                    !customerDetails || !selectedValues.workout || !selectedValues?.difficulty || !selectedValues.date
+                    !selectedValues.user ||
+                    !selectedValues.workout ||
+                    !selectedValues?.difficulty ||
+                    !selectedValues.date
                   }
                   onClick={addWorkout}
                 >
@@ -353,7 +366,7 @@ const MealAndWorkout = () => {
                   ))}
                 </Select>
                 <DatePicker onChange={(date) => handleSelectChange('date', date)} value={selectedValues.date} />
-                <Button type="primary" disabled={!customerDetails || !selectedValues.meal} onClick={addMeal}>
+                <Button type="primary" disabled={!selectedValues.user || !selectedValues.meal} onClick={addMeal}>
                   Add meal
                 </Button>
               </Space>
@@ -451,7 +464,7 @@ const MealAndWorkout = () => {
             <HealthSnapshot
               title="Meal Update"
               date={date.meal}
-              filterResult={(selectedDate) => setDate({ ...date, meal: selectedDate })}
+              filterResult={handleSetMealDate}
               list={userMealRecommendation?.map((item, index) => ({
                 id: item._id,
                 image: item.meal?.meal_image || '',
@@ -462,7 +475,8 @@ const MealAndWorkout = () => {
                 mealType: item.meal_period,
                 quantity: `${item.quantity.value} ${item.quantity.type}`,
               }))}
-              isEmpty={!customerDetails || !userMealRecommendation?.length}
+              isDisabled={!selectedValues.user}
+              isEmpty={!selectedValues.user || !userMealRecommendation?.length}
             />
           ) : (
             <HealthSnapshot
@@ -476,7 +490,8 @@ const MealAndWorkout = () => {
                 mealType: item.difficulty,
                 // quantity: `${item.quantity.value} ${item.quantity.type}`,
               }))}
-              isEmpty={!customerDetails || !userWorkoutRecommendation?.length}
+              isDisabled={!selectedValues.user}
+              isEmpty={!selectedValues.user || !userWorkoutRecommendation?.length}
             />
           )}
         </Col>

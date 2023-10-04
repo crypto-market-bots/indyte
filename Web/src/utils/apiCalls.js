@@ -224,17 +224,9 @@ export const deleteEquipment = createApiThunk(
 
 export const fetchUserMealRecommendation = createApiThunk(
   'fetch/UserMealRecommendation',
-  (user_id) => api.get(`/fetch-user-meal-recommendation/${user_id}`),
+  (reqData) => api.get(`/fetch-user-meal-recommendation/${reqData.user_id}?type=${reqData.type}&value=${reqData.date}`),
   '',
   (response) => response.data?.data,
-  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
-);
-
-export const addUserMealRecommendation = createApiThunk(
-  'add/UserMealRecommendation',
-  (payload) => api.post(`/new-user-meal-recommendation`, payload),
-  'Meal Assigned Successfully',
-  (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
@@ -247,10 +239,26 @@ export const fetchUserWorkoutRecommendation = createApiThunk(
   (error) => error.response?.data?.error ?? error.message ?? 'An error occurred.'
 );
 
+export const addUserMealRecommendation = createApiThunk(
+  'add/UserMealRecommendation',
+  (payload) => api.post(`/new-user-meal-recommendation`, payload),
+  'Meal Assigned Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
 export const addUserWorkoutRecommendation = createApiThunk(
   'add/UserWorkoutRecommendation',
   (payload) => api.post(`/new-user-workout-recommendation`, payload),
   'Workout Assigned Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchHistory = createApiThunk(
+  'fetch/history',
+  (reqData) => api.post(`/get-history?page=${reqData.page}&perPage=${reqData.perPage}`, reqData.payload),
+  '',
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
