@@ -25,12 +25,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { History, PlusOneOutlined, Add, HdrPlusOutlined, Delete } from '@mui/icons-material';
 import '../styles/button.css';
 import '../styles/usercard.css';
-import { Box, IconButton, Stack } from '@mui/material';
+import { Box, IconButton, Stack, Switch } from '@mui/material';
 import { PlusOutlined, CloseSquareFilled } from '@ant-design/icons';
 import { faker } from '@faker-js/faker';
 import { useNavigate } from 'react-router-dom';
 // import { AppNewsUpdate } from '../sections/@dashboard/app';
 import HealthSnapshot from '../components/HealthCard';
+import dayjs from 'dayjs';
+
 import {
   addUserMealRecommendation,
   addUserWorkoutRecommendation,
@@ -40,9 +42,11 @@ import {
   fetchUserMealRecommendation,
   fetchUserWorkoutRecommendation,
   fetchWorkouts,
+  updateUserMealRecommendation,
 } from 'src/utils/apiCalls';
 import { useDispatch, useSelector } from 'react-redux';
 import { border } from '@chakra-ui/react';
+import { valuesIn } from 'lodash';
 
 const index = 0;
 const MealAndWorkout = () => {
@@ -52,19 +56,27 @@ const MealAndWorkout = () => {
   const customers = useSelector((state) => state.slice.data.customers);
   const meals = useSelector((state) => state.slice.data.meals);
   const workouts = useSelector((state) => state.slice.data.workouts);
-  console.log('workout', workouts, 'meals', meals);
+
   let customerDetails = useSelector((state) => state.slice.data.customerDetails);
   // customerDetails = customerDetails[0];
   const userMealRecommendation = useSelector((state) => state.slice.data.userMealRecommendation);
-  console.log('user meal recoomendation ', userMealRecommendation);
   const userWorkoutRecommendation = useSelector((state) => state.slice.data.userWorkoutRecommendation);
   const [date, setDate] = useState({
     workout: new Date(),
     meal: new Date(),
   });
+  const [filterDate, setFilterDate] = useState({
+    workout: null,
+    meal: null,
+  });
+  const [isEdit, setIsEdit] = useState({
+    workout: false,
+    meal: false,
+  });
+
   const options = customers?.map((customer, index) => {
     return {
-      value: `${customer.first_name} ${customer.last_name}`,
+      name: `${customer.full_name}`,
       image: customer.image,
       customerId: customer._id,
     };
@@ -104,7 +116,6 @@ const MealAndWorkout = () => {
   };
 
   const addMeal = async () => {
-    console.log('Selected values :', selectedValues);
     const payload = {
       user_id: selectedValues.user,
       meal_id: selectedValues.mealId,
@@ -113,7 +124,9 @@ const MealAndWorkout = () => {
       date: selectedValues.date,
     };
     await dispatch(addUserMealRecommendation(payload));
-    const formattedDate = formatDate(selectedValues.date);
+
+    const formattedDate = selectedValues.date.format('YYYY-MM-DD');
+    setFilterDate({ ...filterDate, meal: selectedValues.date });
     dispatch(fetchUserMealRecommendation({ user_id: payload.user_id, type: 'date', date: formattedDate }));
   };
 
@@ -126,7 +139,6 @@ const MealAndWorkout = () => {
   };
 
   const addWorkout = async () => {
-    console.log('Selected values :', selectedValues);
     const payload = {
       user_id: selectedValues.user,
       workout_id: selectedValues.workoutId,
@@ -134,7 +146,9 @@ const MealAndWorkout = () => {
       date: selectedValues.date,
     };
     await dispatch(addUserWorkoutRecommendation(payload));
-    dispatch(fetchUserWorkoutRecommendation({ user_id: payload.user_id, type: 'all', date: '2023-10-02' }));
+    const formattedDate = selectedValues.date.format('YYYY-MM-DD');
+    setFilterDate({ ...filterDate, workout: selectedValues.date });
+    dispatch(fetchUserWorkoutRecommendation({ user_id: payload.user_id, type: 'date', date: formattedDate }));
   };
 
   useEffect(() => {
@@ -142,13 +156,18 @@ const MealAndWorkout = () => {
     dispatch(fetchMeal());
     dispatch(fetchWorkouts());
   }, []);
+  const [selectedCustomerName, setSelectedCustomerName] = useState('');
 
   const handleSelect = async (value, option) => {
+    setSelectedCustomerName(option.customerName);
+    const today = dayjs();
+    const formattedDate = today.format('YYYY-MM-DD');
+    setFilterDate({ meal: today, workout: today });
     if (option && option.customerId) {
       setSelectedValues({ ...selectedValues, user: option.customerId });
       await dispatch(fetchCustomerDetails(option.customerId));
-      dispatch(fetchUserMealRecommendation({ user_id: option.customerId, type: 'all', date: date.meal }));
-      dispatch(fetchUserWorkoutRecommendation({ user_id: option.customerId, type: 'all', date: date.workout }));
+      dispatch(fetchUserMealRecommendation({ user_id: option.customerId, type: 'date', date: formattedDate }));
+      dispatch(fetchUserWorkoutRecommendation({ user_id: option.customerId, type: 'date', date: formattedDate }));
     }
   };
 
@@ -174,19 +193,18 @@ const MealAndWorkout = () => {
 
   const handleSegmentedChange = (selectedOption) => {
     setSelectedType(selectedOption);
-    console.log('type ', selectedOption);
   };
 
   const handleSetMealDate = async (selectedDate, formattedDate) => {
-    setDate({ ...date, meal: selectedDate });
+    setFilterDate({ ...filterDate, meal: selectedDate });
     if (selectedDate)
       await dispatch(fetchUserMealRecommendation({ user_id: selectedValues.user, type: 'date', date: formattedDate }));
     else
       await dispatch(fetchUserMealRecommendation({ user_id: selectedValues.user, type: 'all', date: formattedDate }));
   };
   const handleSetWorkoutDate = async (selectedDate, formattedDate) => {
-    console.log('selected date is ', selectedDate);
-    setDate({ ...date, workout: selectedDate });
+    setFilterDate({ ...filterDate, workout: selectedDate });
+
     if (selectedDate)
       await dispatch(
         fetchUserWorkoutRecommendation({ user_id: selectedValues.user, type: 'date', date: formattedDate })
@@ -196,16 +214,62 @@ const MealAndWorkout = () => {
         fetchUserWorkoutRecommendation({ user_id: selectedValues.user, type: 'all', date: formattedDate })
       );
   };
-  // const handleSetMealDate = async (selectedDate) => {
-  //   // console.log('selected date is ', selectedDate);
-  //   setDate({ ...date, meal: selectedDate });
-  //   if (selectedDate)
-  //     await dispatch(
-  //       fetchUserWorkoutRecommendation({ user_id: selectedValues.user, type: 'date', date: date.workout })
-  //     );
-  //   else
-  //     await dispatch(fetchUserWorkoutRecommendation({ user_id: selectedValues.user, type: 'all', date: date.workout }));
-  // };
+
+  const handleEdit = async (values) => {
+    if (values.section === 'meal') {
+      setIsEdit({ ...isEdit, meal: true });
+
+      let quantity = values.quantity.split(' ');
+      const selectedMeal = meals?.find((meal) => meal.name === values.Name);
+
+      // Check if the selectedMeal exists and has an _id property
+      if (selectedMeal && selectedMeal._id) {
+        await setSelectedValues({
+          ...selectedValues,
+          mealId: selectedMeal._id,
+          meal: values.Name,
+          type: values.Type,
+          date: dayjs(values.date),
+          quantity: { value: quantity[0], type: quantity[1] },
+        });
+      }
+    } else {
+      setIsEdit({ ...isEdit, workout: true });
+      const selectedWorkout = workouts?.find((workout) => workout.name === values.Name);
+
+      // Check if the selectedMeal exists and has an _id property
+      if (selectedWorkout && selectedWorkout._id) {
+        setSelectedValues({
+          ...selectedValues,
+          workoutId: selectedWorkout._id,
+          workout: values.Name,
+          difficulty: values.Type,
+          date: dayjs(values.date),
+        });
+      }
+      // Check if the selectedMeal exists and has an _id property
+      // if (selectedMeal && selectedMeal._id) {
+      //   await setSelectedValues({
+      //     ...selectedValues,
+      //     mealId: selectedMeal._id,
+      //     meal: values.Name,
+      //     type: values.Type,
+      //     date: dayjs(values.date),
+      //     quantity: { value: quantity[0], type: quantity[1] },
+      //   });
+      // }
+    }
+  };
+
+  const updateMeal = () => {
+    setIsEdit({ ...isEdit, meal: false });
+
+    const mealId = selectedValues.mealId;
+  };
+  const updateWorkout = () => {
+    setIsEdit({ ...isEdit, workout: false });
+    const WorkoutId = selectedValues.workoutId;
+  };
 
   return (
     <>
@@ -213,27 +277,33 @@ const MealAndWorkout = () => {
       <Row style={{ marginTop: 5, display: 'flex', justifyContent: 'space-between' }} gutter={16}>
         <Col span={6} style={{ marginTop: '7px' }}>
           <AutoComplete
-            // popupClassName="certain-category-search-dropdown"
+            popupClassName="certain-category-search-dropdown"
             style={{ width: '100%' }}
+            value={selectedCustomerName}
             options={options.map((option, index) => ({
-              value: option.value,
+              value: option.customerId,
+              customerName: option.name,
               label: (
-                <div>
-                  <Avatar src={option.image} /> {option.value}
+                <div key={index}>
+                  <Avatar src={option.image} /> {option.name}
                 </div>
               ),
               customerId: option.customerId,
             }))}
-            filterOption={(inputValue, option) => option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1}
+            filterOption={(inputValue, option) =>
+              option.customerName?.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+            }
             onSelect={handleSelect}
             allowClear={{ clearIcon: <CloseSquareFilled /> }}
+            onChange={(value) => setSelectedCustomerName(value)}
+            onClear={() => setSelectedCustomerName('')}
           >
             <Input size="large" placeholder="Search here" />
           </AutoComplete>
         </Col>
         <Col span={16}>
           <div>
-            {selectedType == 'Workout' ? (
+            {selectedType === 'Workout' ? (
               <Space
                 size={8}
                 align=""
@@ -241,14 +311,11 @@ const MealAndWorkout = () => {
                   background: '#f0f2f5',
                   padding: '10px',
                   borderRadius: '5px',
+                  width: '100%',
+                  flexWrap: 'wrap',
                 }}
               >
-                <Select
-                  style={{ width: 150 }}
-                  placeholder="Workout"
-                  onChange={handleWorkoutSelectChange}
-                  value={selectedValues.workout}
-                >
+                <Select placeholder="Workout" onChange={handleWorkoutSelectChange} value={selectedValues.workout}>
                   {workouts?.map((workout, index) => (
                     <Select.Option key={index} value={workout?.name}>
                       <Stack direction={'row'} alignItems={'center'}>
@@ -273,7 +340,6 @@ const MealAndWorkout = () => {
 
                 <Select
                   placeholder="difficulty"
-                  style={{ width: 150 }}
                   onChange={(value) => handleSelectChange('difficulty', value)}
                   value={selectedValues.difficulty}
                 >
@@ -282,7 +348,11 @@ const MealAndWorkout = () => {
                   <Select.Option value="HARD">hard</Select.Option>
                 </Select>
 
-                <DatePicker onChange={(date) => handleSelectChange('date', date)} value={selectedValues.date} />
+                <DatePicker
+                  style={{ minWidth: 100 }}
+                  onChange={(date) => handleSelectChange('date', date)}
+                  value={selectedValues.date}
+                />
                 <Button
                   type="primary"
                   disabled={
@@ -291,9 +361,9 @@ const MealAndWorkout = () => {
                     !selectedValues?.difficulty ||
                     !selectedValues.date
                   }
-                  onClick={addWorkout}
+                  onClick={isEdit.workout ? updateWorkout : addWorkout}
                 >
-                  Add Workout
+                  {isEdit.workout ? `Update Workout` : 'Add Workout'}
                 </Button>
               </Space>
             ) : (
@@ -304,10 +374,12 @@ const MealAndWorkout = () => {
                   background: '#f0f2f5',
                   padding: '10px',
                   borderRadius: '5px',
+                  width: '100%',
+                  flexWrap: 'wrap',
                 }}
               >
                 <Select
-                  style={{ width: 150 }}
+                  style={{ minWidth: 200 }}
                   placeholder="Meal"
                   onChange={handleMealSelectChange}
                   value={selectedValues.meal}
@@ -335,8 +407,8 @@ const MealAndWorkout = () => {
                 </Select>
 
                 <Select
+                  style={{ minWidth: 150 }}
                   placeholder="type"
-                  style={{ width: 150 }}
                   onChange={(value) => handleSelectChange('type', value)}
                   value={selectedValues.type}
                 >
@@ -346,7 +418,7 @@ const MealAndWorkout = () => {
                   <Select.Option value="SNACKS">Snacks</Select.Option>
                 </Select>
                 <Input
-                  // style={{ width: 150 }}
+                  style={{ width: 80 }}
                   placeholder="Quantity"
                   value={selectedValues.quantity.value || ''}
                   onChange={(e) =>
@@ -355,7 +427,6 @@ const MealAndWorkout = () => {
                 />
                 <Select
                   placeholder="Unit"
-                  // style={{ width: 150 }}
                   onChange={(value) => handleQuantityTypeChange(value)}
                   value={selectedValues.quantity.type}
                 >
@@ -365,10 +436,22 @@ const MealAndWorkout = () => {
                     </Select.Option>
                   ))}
                 </Select>
-                <DatePicker onChange={(date) => handleSelectChange('date', date)} value={selectedValues.date} />
-                <Button type="primary" disabled={!selectedValues.user || !selectedValues.meal} onClick={addMeal}>
-                  Add meal
-                </Button>
+                <DatePicker
+                  style={{ minWidth: 130 }}
+                  onChange={(date) => {
+                    handleSelectChange('date', date);
+                  }}
+                  value={selectedValues.date}
+                />
+                {!isEdit.meal ? (
+                  <Button type="primary" disabled={!selectedValues.user || !selectedValues.meal} onClick={addMeal}>
+                    Add meal
+                  </Button>
+                ) : (
+                  <Button type="primary" onClick={updateMeal}>
+                    Update Meal
+                  </Button>
+                )}
               </Space>
             )}
           </div>
@@ -385,26 +468,20 @@ const MealAndWorkout = () => {
               // height: '480px',
             }}
           >
-            {customerDetails ? (
+            {selectedValues.user ? (
               <>
                 <Box display="flex" justifyContent={'center'}>
                   <Avatar size={100} src={customerDetails?.image} />
                 </Box>
-                <h2
-                  style={{ marginBottom: '10px', textAlign: 'center' }}
-                >{`${customerDetails?.first_name} ${customerDetails?.last_name}`}</h2>
+                <h2 style={{ marginBottom: '10px', textAlign: 'center' }}>{`${customerDetails?.full_name}`}</h2>
                 <div style={{ marginBottom: '20px', textAlign: 'left' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                     <Text strong>Height:</Text>
                     <Text>{customerDetails?.height} cm</Text>
                   </div>
-                  {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-                <Text strong>Waist:</Text>
-                <Text>75 cm</Text>
-              </div> */}
                   <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                     <Text strong>Weight:</Text>
-                    <Text>{customerDetails?.weight} kg</Text>
+                    <Text>{customerDetails?.current_weight} kg</Text>
                   </div>
                   {/* <div style={{ display: 'flex', justifyContent: 'space-around' }}>
                 <Text strong>Dietary Habits:</Text>
@@ -463,7 +540,7 @@ const MealAndWorkout = () => {
           {selectedType == 'Meal' ? (
             <HealthSnapshot
               title="Meal Update"
-              date={date.meal}
+              date={filterDate.meal || null}
               filterResult={handleSetMealDate}
               list={userMealRecommendation?.map((item, index) => ({
                 id: item._id,
@@ -471,25 +548,30 @@ const MealAndWorkout = () => {
                 mealCompletionImage: item.meal_image_proof,
                 isConsumedmeal: item.user_picked,
                 isSkipMeal: item.user_skip,
-                foodName: item.meal.name,
-                mealType: item.meal_period,
+                Name: item.meal.name,
+                Type: item.meal_period,
+                date: item.date,
                 quantity: `${item.quantity.value} ${item.quantity.type}`,
+                section: 'meal',
               }))}
+              handleEdit={handleEdit}
               isDisabled={!selectedValues.user}
               isEmpty={!selectedValues.user || !userMealRecommendation?.length}
             />
           ) : (
             <HealthSnapshot
               title="Workout Update"
-              date={date.workout}
+              date={filterDate.workout || null}
               filterResult={handleSetWorkoutDate}
               list={userWorkoutRecommendation?.map((item, index) => ({
                 id: item._id,
                 image: item.workout_id?.image || '',
-                foodName: item.workout_id.name,
-                mealType: item.difficulty,
-                // quantity: `${item.quantity.value} ${item.quantity.type}`,
+                Name: item.workout_id.name,
+                Type: item.difficulty,
+                date: item.date,
+                section: 'workout',
               }))}
+              handleEdit={handleEdit}
               isDisabled={!selectedValues.user}
               isEmpty={!selectedValues.user || !userWorkoutRecommendation?.length}
             />

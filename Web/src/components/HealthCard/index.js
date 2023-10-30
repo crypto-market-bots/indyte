@@ -15,22 +15,32 @@ HealthSnapshot.propTypes = {
   list: PropTypes.array.isRequired,
 };
 
-export default function HealthSnapshot({ title, date, filterResult, isDisabled, subheader, list, isEmpty, ...other }) {
+export default function HealthSnapshot({
+  title,
+  date,
+  handleEdit,
+  filterResult,
+  isDisabled,
+  subheader,
+  list,
+  isEmpty,
+  ...other
+}) {
   return (
     <Card {...other}>
-      {console.log('date is', date)}
       <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} mr={3}>
         <CardHeader title={title} subheader={subheader} />
         <DatePicker
           size={8}
+          value={date}
           disabled={isDisabled}
           onChange={(selectedDate) => {
             console.log('selected date', selectedDate);
             if (selectedDate) {
-              selectedDate = new Date(selectedDate);
-              const year = selectedDate.getFullYear();
-              const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-              const day = String(selectedDate.getDate()).padStart(2, '0');
+              let newDate = new Date(selectedDate);
+              const year = newDate.getFullYear();
+              const month = String(newDate.getMonth() + 1).padStart(2, '0');
+              const day = String(newDate.getDate()).padStart(2, '0');
               let formattedDate = `${year}-${month}-${day}`;
               filterResult(selectedDate, formattedDate);
             } else {
@@ -45,8 +55,8 @@ export default function HealthSnapshot({ title, date, filterResult, isDisabled, 
         <>
           <Scrollbar style={{ height: '50vh', minHeight: '400px' }}>
             <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
-              {list?.map((news) => (
-                <HealthCard key={news.id} news={news} />
+              {list?.map((row) => (
+                <HealthCard key={row.id} handleEdit={handleEdit} row={row} />
               ))}
             </Stack>
           </Scrollbar>
@@ -74,18 +84,17 @@ HealthCard.propTypes = {
   }),
 };
 
-function HealthCard({ news }) {
-  const { image, title, foodName, isConsumedmeal, mealType, quantity, mealCompletionImage, isSkipMeal } = news;
+function HealthCard({ row, handleEdit }) {
+  const { image, title, Name, isConsumedmeal, Type, quantity, mealCompletionImage, isSkipMeal } = row;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Image alt={title} src={image} style={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
-      {/* <Box component="img" alt={title} src={image} sx={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} /> */}
 
       <Box sx={{ minWidth: 240, flexGrow: 1, display: 'flex', alignItems: 'center' }}>
-        <Typography.Text>{foodName}</Typography.Text>
+        <Typography.Text>{Name}</Typography.Text>
         <Divider type="vertical" />
-        <Typography.Text>{mealType}</Typography.Text>
+        <Typography.Text>{Type}</Typography.Text>
         <Divider type="vertical" />
         <Typography.Text>{quantity}</Typography.Text>
         <Divider type="vertical" />
@@ -99,7 +108,9 @@ function HealthCard({ news }) {
           <Image alt={'consumed'} src={image} style={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
         )}
       </Box>
-      <Button style={{ marginRight: '10px' }}>Edit</Button>
+      <Button onClick={() => handleEdit(row)} style={{ marginRight: '10px' }}>
+        Edit
+      </Button>
     </Stack>
   );
 }

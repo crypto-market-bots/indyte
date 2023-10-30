@@ -58,6 +58,11 @@ var navConfig = {
       icon: icon('ic_cart'),
     },
     {
+      title: 'Weight Tracker',
+      path: '/dashboard/weight-tracker',
+      icon: icon('ic_cart'),
+    },
+    {
       title: 'History',
       path: '/dashboard/history',
       icon: icon('ic_cart'),

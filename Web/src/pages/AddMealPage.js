@@ -93,35 +93,48 @@ const AddMealPage = () => {
 
   const onFinish = (values) => {
     // For Add
-    if (type === 'Meal') {
-      const formData = new FormData();
-      for (const key in values) {
-        if (values.hasOwnProperty(key)) {
-          if (key == 'nutritions' || key == 'required_ingredients' || key == 'steps') {
-            formData.append(key, JSON.stringify(values[key]));
-          } else formData.append(key, values[key]);
-        }
+    const formData = new FormData();
+    for (const key in values) {
+      if (values.hasOwnProperty(key)) {
+        if (
+          key == 'nutritions' ||
+          key == 'required_ingredients' ||
+          key == 'steps' ||
+          key === 'exercises' ||
+          key === 'physical_equipments'
+        ) {
+          formData.append(key, JSON.stringify(values[key]));
+        } else formData.append(key, values[key]);
       }
+    }
+    console.log(type);
+    if (type === 'Meal') {
       formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
       if (!id) dispatch(addMeal(formData));
       else dispatch(EditMeal({ id, formData }));
-    }
-    if (!id) {
-      if (type === 'Exercise') dispatch(addExercise(values));
-      else if (type === 'Workout') dispatch(addWorkout(values));
-    }
-    // For Edit
-    else {
-      values = { ...values, type: type, image: selectedFile ? selectedFile : initialFormValues.image };
-
-      if (type === 'Exercise' && id) dispatch(EditExercise({ id, ...values }));
-      else if (type === 'Workout' && id) dispatch(EditWorkout({ id, ...values }));
+    } else if (type === 'Workout') {
+      formData.append('workout_image', selectedFile ? selectedFile : initialFormValues.image);
+      formData.append('workout_name', values.name);
+      if (!id) dispatch(addWorkout(formData));
+      else dispatch(EditWorkout({ id, formData }));
+    } else if (type === 'Exercise') {
+      console.log(' ia m in ', selectedFile);
+      formData.append('exercise_image', selectedFile ? selectedFile : initialFormValues.image);
+      console.log(formData);
+      if (!id) dispatch(addExercise(formData));
+      else dispatch(EditExercise({ id, formData }));
     }
   };
 
   useEffect(() => {
-    if (!id) type == 'Workout' && dispatch(fetchAllExercises());
-    else if (id) {
+    if (!id) {
+      if (type == 'Workout') {
+        dispatch(fetchAllExercises());
+        dispatch(fetchAllEquipment()).then((res) => {
+          setEquipmentList(res.payload);
+        });
+      }
+    } else if (id) {
       if (type == 'Meal') dispatch(fetchSingleMealData(id));
       else if (type == 'Exercise') dispatch(fetchSingleExercise(id));
       else if (type == 'Workout') {
@@ -254,11 +267,11 @@ const AddMealPage = () => {
                 {' '}
                 + Add {name.replace(/_/g, ' ').toLowerCase()}
               </Button>
-              {type == 'Workout' && (
+              {/* {type == 'Workout' && (
                 <Button type="primary" style={{ marginTop: '5px', marginLeft: '5px' }} onClick={openModal}>
                   Manage Equipment
                 </Button>
-              )}
+              )} */}
             </Form.Item>
           </div>
         )}
@@ -337,6 +350,20 @@ const AddMealPage = () => {
       </Stack>
     ),
     value: exercise._id,
+  }));
+
+  const equipmentOptions = equipments?.map((equipment) => ({
+    label: (
+      <Stack direction={'row'} alignItems={'center'}>
+        <Image
+          src={equipment.equipment_image}
+          alt={equipment.equipment_name}
+          style={{ width: '30px', height: '30px', marginRight: '8px', borderRadius: '10%' }}
+        />
+        <Typography.Text>{equipment.equipment_name}</Typography.Text>
+      </Stack>
+    ),
+    value: equipment._id,
   }));
 
   const stepsFields = [
@@ -491,12 +518,7 @@ const AddMealPage = () => {
                       style={{ borderRadius: '10px' }}
                     />
                   ) : (
-                    <Image
-                      width={200}
-                      src={initialFormValues.image}
-                      alt="Meal Image"
-                      style={{ borderRadius: '10px' }}
-                    />
+                    <Image width={200} src={initialFormValues.image} alt="Image" style={{ borderRadius: '10px' }} />
                   )}
                   <Form.Item name="image">
                     <label htmlFor="imageInput" name="image">
@@ -575,8 +597,33 @@ const AddMealPage = () => {
                       </Form.Item>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={20}>
+                      <Form.Item label="Physical Equipments" name="physical_equipments">
+                        <Select
+                          size="large"
+                          mode="multiple"
+                          allowClear
+                          style={{ width: '100%' }}
+                          placeholder="Please select"
+                          options={equipmentOptions}
+                          onChange={(e) => console.log(e)}
+                          filterOption={(inputValue, option) =>
+                            option.label.props.children[1].props.children
+                              .toLowerCase()
+                              .includes(inputValue.toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col style={{ display: 'flex', alignItems: 'center' }}>
+                      <Button type="primary" style={{ marginTop: '5px', marginLeft: '5px' }} onClick={openModal}>
+                        Manage Equipment
+                      </Button>
+                    </Col>
+                  </Row>
 
-                  {generateFormList('physical_equipments', [], physicalEquipmentsFields)}
+                  {/* {generateFormList('physical_equipments', [], physicalEquipmentsFields)} */}
                 </>
               )}
 

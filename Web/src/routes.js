@@ -20,6 +20,7 @@ import CustomerDetailPage from './pages/CustomerDetailPage';
 import AddDietitian from './pages/AddDietitian';
 import MealAndWorkout from './pages/MealAndWorkout';
 import ProgressTracker from './pages/ProgressTracker';
+import WeightTrackerPage from './pages/WeightTrackerPage';
 import HistoryPage from './pages/HistoryPage';
 import AddMealPage from './pages/AddMealPage';
 import ManageMealPage from './pages/ManageMealPage';
@@ -57,6 +58,10 @@ export default function Router() {
         {
           path: 'meal-workout',
           element: <MealAndWorkout />,
+        },
+        {
+          path: 'weight-tracker',
+          element: <WeightTrackerPage />,
         },
         { path: 'meal-workout/add-item', element: <AddMealPage /> },
         { path: 'templates/edit-item/:id', element: <AddMealPage /> },

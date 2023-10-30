@@ -139,7 +139,7 @@ const CustomerDetailPage = () => {
 
   useEffect(() => {
     dispatch(fetchCustomerDetails(id));
-    dispatch(fetchDietitian());
+    // dispatch(fetchDietitian());
   }, []);
 
   const getAge = (date) => {

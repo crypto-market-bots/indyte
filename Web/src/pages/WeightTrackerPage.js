@@ -79,7 +79,7 @@ function applySortFilter(array, comparator, query) {
 
 const GOALS = ['Weight Loss', 'Weight Gain'];
 
-export default function HistoryPage() {
+export default function WeightTrackerPage() {
   const [open, setOpen] = useState(null);
 
   const [openFilter, setOpenFilter] = useState(null);
