@@ -46,6 +46,7 @@ const initialState = {
     userWorkoutRecommendation: [],
   },
   loading: {
+    editMeal: false,
     addMeal: false,
     refreshOrders: false,
     login: false,
@@ -95,6 +96,12 @@ export const slice = createSlice({
       .addCase(addMeal.pending, (state, action) => {
         state.loading.addMeal = true;
       })
+      .addCase(EditMeal.pending, (state, action) => {
+        state.loading.editMeal = true;
+      })
+      .addCase(EditMeal.fulfilled, (state, action) => {
+        state.loading.editMeal = false;
+      })
       .addCase(fetchSingleMealData.pending, (state, action) => {
         state.loading.singlemeal = true;
       })
@@ -119,6 +126,8 @@ export const slice = createSlice({
         state.loading.singleWorkout = true;
       })
       .addCase(fetchSingleWorkout.fulfilled, (state, action) => {
+        console.log('action ', action);
+
         state.loading.singleWorkout = false;
         state.data.singleWorkout = action.payload;
       })

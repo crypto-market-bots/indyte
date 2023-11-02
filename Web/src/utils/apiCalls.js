@@ -104,12 +104,10 @@ export const deleteMeal = createApiThunk(
 
 export const EditMeal = createApiThunk(
   'Edit/SingleMealData',
-  (requestData) => {
-    api.put(`/update-meal/${requestData.id}`, requestData.formData);
-  },
+  (requestData) => api.put(`/update-meal/${requestData.id}`, requestData.formData),
   'Meal Edited successfully',
   (response) => response.data,
-  (error) => error?.response?.data?.message ?? error.message ?? 'An error occurred.'
+  (error) => error.response.data?.message ?? error.message ?? 'An error occurred.'
 );
 
 export const fetchAllExercises = createApiThunk(
@@ -129,12 +127,10 @@ export const fetchSingleExercise = createApiThunk(
 
 export const EditExercise = createApiThunk(
   'Edit/SingleMealData',
-  (requestData) => {
-    api.put(`/update-exercise/${requestData.id}`, requestData);
-  },
+  (requestData) => api.put(`/update-exercise/${requestData.id}`, requestData.formData),
   'Exercise Edited successfully',
   (response) => response.data,
-  (error) => error?.response?.data?.message ?? error.message ?? 'An error occurred.'
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
 
 export const addExercise = createApiThunk(
@@ -178,9 +174,7 @@ export const deleteWorkout = createApiThunk(
 );
 export const EditWorkout = createApiThunk(
   'edit/workouts',
-  (requestData) => {
-    return api.put(`/update-workout/${requestData.id}`, requestData); // Added 'return'
-  },
+  (requestData) => api.put(`/update-workout/${requestData.id}`, requestData.formData),
   'Workouts Edited Successfully',
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'

@@ -67,6 +67,12 @@ const AddMealPage = () => {
   const isAddEquipmentLoading = useSelector((state) => state.slice.loading.addEquipment);
   const isUpdateEquipmentLoading = useSelector((state) => state.slice.loading.updateEquipment);
   const equipments = useSelector((state) => state.slice.data.equipments);
+  console.log(WorkoutData);
+  //update loadings
+  const isEditMealLoading = useSelector((state) => state.slice.loading.editMeal);
+  const isAddMealLoading = useSelector((state) => state.slice.loading.addMeal);
+
+  const loading = isEditMealLoading || isAddMealLoading;
 
   const isLoading =
     type == 'Meal'
@@ -79,15 +85,16 @@ const AddMealPage = () => {
 
   let initialFormValues = { type };
   if (id) {
-    const workoutIndex = WorkoutData.findIndex((workout) => workout._id === id);
+    // const workoutIndex = WorkoutData?.findIndex((workout) => workout._id === id);
+    // console.log('WorkoutData', WorkoutData);
 
     initialFormValues =
       type === 'Meal'
-        ? { ...MealData, type, image: MealData.meal_image }
+        ? { ...MealData, type, image: MealData?.meal_image }
         : type === 'Exercise'
-        ? { ...ExerciseData, type }
+        ? { ...ExerciseData, type, image: ExerciseData?.exercise_image }
         : type === 'Workout'
-        ? { ...(WorkoutData[workoutIndex] || {}), type }
+        ? { ...WorkoutData, type, image: WorkoutData?.workout_image }
         : {};
   }
 
@@ -97,9 +104,9 @@ const AddMealPage = () => {
     for (const key in values) {
       if (values.hasOwnProperty(key)) {
         if (
-          key == 'nutritions' ||
-          key == 'required_ingredients' ||
-          key == 'steps' ||
+          key === 'nutritions' ||
+          key === 'required_ingredients' ||
+          key === 'steps' ||
           key === 'exercises' ||
           key === 'physical_equipments'
         ) {
@@ -107,22 +114,27 @@ const AddMealPage = () => {
         } else formData.append(key, values[key]);
       }
     }
-    console.log(type);
-    if (type === 'Meal') {
-      formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
-      if (!id) dispatch(addMeal(formData));
-      else dispatch(EditMeal({ id, formData }));
-    } else if (type === 'Workout') {
-      formData.append('workout_image', selectedFile ? selectedFile : initialFormValues.image);
-      formData.append('workout_name', values.name);
-      if (!id) dispatch(addWorkout(formData));
-      else dispatch(EditWorkout({ id, formData }));
-    } else if (type === 'Exercise') {
-      console.log(' ia m in ', selectedFile);
-      formData.append('exercise_image', selectedFile ? selectedFile : initialFormValues.image);
-      console.log(formData);
-      if (!id) dispatch(addExercise(formData));
-      else dispatch(EditExercise({ id, formData }));
+    switch (type) {
+      case 'Meal':
+        formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addMeal(formData));
+        else dispatch(EditMeal({ id, formData }));
+        break;
+
+      case 'Workout':
+        formData.append('workout_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addWorkout(formData));
+        else dispatch(EditWorkout({ id, formData }));
+        break;
+
+      case 'Exercise':
+        formData.append('exercise_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addExercise(formData));
+        else dispatch(EditExercise({ id, formData }));
+        break;
+
+      default:
+        break;
     }
   };
 
@@ -135,9 +147,9 @@ const AddMealPage = () => {
         });
       }
     } else if (id) {
-      if (type == 'Meal') dispatch(fetchSingleMealData(id));
-      else if (type == 'Exercise') dispatch(fetchSingleExercise(id));
-      else if (type == 'Workout') {
+      if (type === 'Meal') dispatch(fetchSingleMealData(id));
+      else if (type === 'Exercise') dispatch(fetchSingleExercise(id));
+      else if (type === 'Workout') {
         dispatch(fetchAllExercises());
         dispatch(fetchSingleWorkout(id));
         dispatch(fetchAllEquipment()).then((res) => {
@@ -159,6 +171,10 @@ const AddMealPage = () => {
     {
       value: 'protein',
       label: 'Protein',
+    },
+    {
+      value: 'calorie',
+      label: 'Calorie',
     },
   ];
   const difficulty_levels = [
@@ -342,7 +358,7 @@ const AddMealPage = () => {
     label: (
       <Stack direction={'row'} alignItems={'center'}>
         <Image
-          src={exercise.image}
+          src={exercise.exercise_image}
           alt={exercise.name}
           style={{ width: '30px', height: '30px', marginRight: '8px', borderRadius: '10%' }}
         />
@@ -484,7 +500,7 @@ const AddMealPage = () => {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
           <Card style={{ width: '100%', maxWidth: '1000px' }}>
             <Form layout="vertical" onFinish={onFinish} initialValues={initialFormValues}>
-              <Title level={3}>Create a New {type}</Title>
+              <Title level={3}>{!id ? `Create a New ${type}` : `Update ${type}`}</Title>
               <Row justify={'space-between'}>
                 <Col span={11}>
                   <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please enter a name' }]}>
@@ -638,7 +654,7 @@ const AddMealPage = () => {
               )}
 
               <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" loading={loading} htmlType="submit">
                   {!id ? 'Submit' : 'Save'}
                 </Button>
               </Form.Item>

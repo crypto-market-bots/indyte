@@ -242,7 +242,7 @@ const MealAndWorkout = () => {
         setSelectedValues({
           ...selectedValues,
           workoutId: selectedWorkout._id,
-          workout: values.Name,
+          workout: values.workout_Name,
           difficulty: values.Type,
           date: dayjs(values.date),
         });

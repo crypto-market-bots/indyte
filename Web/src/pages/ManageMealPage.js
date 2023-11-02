@@ -114,7 +114,7 @@ const ManageMealPage = ({ type }) => {
         </Button>
       </div>
       <Row gutter={[16, 16]}>
-        {!filteredData?.length && 'No Meal Found'}
+        {!filteredData?.length && `No ${type} Found`}
         {filteredData?.map((item) => (
           <Col key={item._id} xs={24} sm={12} md={6} xxl={5} style={{ gap: 10 }}>
             <Card
@@ -122,7 +122,9 @@ const ManageMealPage = ({ type }) => {
               cover={
                 <img
                   alt="example"
-                  src={type == 'Meal' ? item.meal_image : item.image}
+                  src={
+                    type == 'Meal' ? item.meal_image : type === 'Exercise' ? item.exercise_image : item.workout_image
+                  }
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
               } // Set the image height and object-fit
