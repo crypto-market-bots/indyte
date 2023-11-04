@@ -39,6 +39,12 @@ var navConfig = {
       path: '/dashboard/templates',
       icon: icon('ic_cart'),
     },
+
+    {
+      title: 'Image Gallery',
+      path: '/dashboard/images',
+      icon: icon('ic_cart'),
+    },
   ],
   dietitian: [
     {

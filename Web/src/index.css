@@ -2,20 +2,32 @@
 
 /* For Webkit Browsers */
 ::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #888    ;
-    border-radius: 5px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
-  
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.custom-dragger {
+  border: 2px dashed #ccc;
+  /* padding: 20px; */
+  text-align: center;
+  cursor: pointer;
+  background-color: #f7f7f7;
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+
+.custom-dragger:hover {
+  border-color: #1890ff;
+}

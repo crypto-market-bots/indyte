@@ -25,6 +25,7 @@ import HistoryPage from './pages/HistoryPage';
 import AddMealPage from './pages/AddMealPage';
 import ManageMealPage from './pages/ManageMealPage';
 import Templates from './pages/Templates';
+import ImageGallery from './pages/ImageGallery';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -72,6 +73,7 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'templates', element: <Templates /> },
+        { path: 'images', element: <ImageGallery /> },
       ],
     },
     { path: 'forgot-password', element: <ForgotPasswordPage /> },

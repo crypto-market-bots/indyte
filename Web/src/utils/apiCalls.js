@@ -272,3 +272,33 @@ export const fetchWeights = createApiThunk(
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+
+export const getActivityImages = createApiThunk(
+  'get/activityImages',
+  () => api.get(`/get-image-name?type=physicalActivities`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const getGoalImages = createApiThunk(
+  'get/Goalimages',
+  () => api.get(`/get-image-name?type=goal`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const getlifestyleImages = createApiThunk(
+  'get/Lifestyleimages',
+  () => api.get(`/get-image-name?type=lifestyle`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addImage = createApiThunk(
+  'add/image',
+  (payload) => api.post(`/create-image-name`, payload),
+  'Image Added Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);

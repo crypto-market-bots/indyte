@@ -27,7 +27,21 @@ import {
 
 import { Link } from 'react-router-dom';
 // components
-import { AutoComplete, Col, DatePicker, Empty, Input, Row, Segmented, Select, Spin, Tag } from 'antd';
+import {
+  AutoComplete,
+  Col,
+  DatePicker,
+  Drawer,
+  Empty,
+  Image,
+  Input,
+  Rate,
+  Row,
+  Segmented,
+  Select,
+  Spin,
+  Tag,
+} from 'antd';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -38,6 +52,7 @@ import USERLIST from '../_mock/user';
 import { CloseSquareFilled } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCustomer, fetchCustomerDetails, fetchHistory } from 'src/utils/apiCalls';
+import TextArea from 'antd/es/input/TextArea';
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -256,8 +271,24 @@ export default function HistoryPage() {
     return date.toLocaleDateString('en-US', options);
   }
 
+  const [DrawerOpen, setDrawerOpen] = useState(false);
+  const showDrawer = () => {
+    setDrawerOpen(true);
+  };
+  const onClose = () => {
+    setDrawerOpen(false);
+  };
+  const containerStyle = {
+    // position: 'relative',
+    // height: '100%',
+    // padding: 48,
+    overflow: 'hidden',
+    // textAlign: 'center',
+    // background: 'white',
+    borderRadius: '5px',
+  };
   return (
-    <>
+    <div>
       <Helmet>
         <title> History | Minimal UI </title>
       </Helmet>
@@ -322,7 +353,30 @@ export default function HistoryPage() {
           </Col> */}
         </Row>
 
-        <Card>
+        <Card style={{ minHeight: '600px', borderRadius: '10px 10px 0px 0px' }}>
+          <Drawer
+            title="DIET PROOF"
+            placement="right"
+            closable={false}
+            onClose={onClose}
+            open={DrawerOpen}
+            getContainer={false}
+          >
+            <Image width={'100%'} height={'250px'} src="https://takethemameal.com/files_images_v2/stam.jpg" />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Rate disabled defaultValue={2.5} />
+            </div>
+            <div>
+              <TextArea
+                rows={6}
+                placeholder=""
+                value={
+                  "Thank you for providing me with this nutritious meal plan! I'm committed to following it diligently. I'll make sure to document each meal with a photo to show my progress. Looking forward to a healthier me!"
+                }
+                maxLength={6}
+              />
+            </div>
+          </Drawer>
           <UserListToolbar
             numSelected={selected.length}
             history={history}
@@ -333,7 +387,7 @@ export default function HistoryPage() {
 
           <Scrollbar>
             <Spin spinning={isHistoryLoading}>
-              <TableContainer sx={{ minWidth: 800 }}>
+              <TableContainer sx={{ minWidth: 800 }} style={containerStyle}>
                 <Table>
                   <UserListHead
                     order={order}
@@ -428,7 +482,11 @@ export default function HistoryPage() {
                             </>
 
                             <TableCell align="left">{formatDate(item?.date)}</TableCell>
-                            <TableCell align="left">
+                            <TableCell
+                              align="left"
+                              onClick={item?.user_picked && showDrawer}
+                              style={{ cursor: item?.user_picked && 'pointer' }}
+                            >
                               {!item?.user_picked && !item?.user_skip ? (
                                 <Tag color="yellow">{'pending'}</Tag>
                               ) : item?.user_skip ? (
@@ -459,7 +517,8 @@ export default function HistoryPage() {
               </TableContainer>
             </Spin>
           </Scrollbar>
-
+        </Card>
+        <Card style={{ borderRadius: '0px 0px 10px 10px' }}>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
@@ -516,6 +575,9 @@ export default function HistoryPage() {
           Delete
         </MenuItem>
       </Popover>
-    </>
+      {/* <div style={containerStyle}> */}
+
+      {/* </div> */}
+    </div>
   );
 }

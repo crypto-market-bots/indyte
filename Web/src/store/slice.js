@@ -21,6 +21,9 @@ import {
   addMeal,
   fetchUserWorkoutRecommendation,
   fetchHistory,
+  getGoalImages,
+  getActivityImages,
+  getlifestyleImages,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -44,6 +47,9 @@ const initialState = {
     equipments: [],
     userMealRecommendation: [],
     userWorkoutRecommendation: [],
+    lifestyleImages: [],
+    goalImages: [],
+    activityImages: [],
   },
   loading: {
     editMeal: false,
@@ -159,10 +165,16 @@ export const slice = createSlice({
       .addCase(fetchHistory.fulfilled, (state, action) => {
         state.data.history = action.payload;
         state.loading.history = false;
+      })
+      .addCase(getGoalImages.fulfilled, (state, action) => {
+        state.data.goalImages = action.payload;
+      })
+      .addCase(getActivityImages.fulfilled, (state, action) => {
+        state.data.activityImages = action.payload;
+      })
+      .addCase(getlifestyleImages.fulfilled, (state, action) => {
+        state.data.lifestyleImages = action.payload;
       });
-    // .addCase(fetchHistory.rejected, (state, action) => {
-    //   state.loading.history = false;
-    // });
   },
 });
 
