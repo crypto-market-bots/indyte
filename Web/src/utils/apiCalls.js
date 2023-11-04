@@ -294,11 +294,32 @@ export const getlifestyleImages = createApiThunk(
   (response) => response.data.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+export const getBannerImages = createApiThunk(
+  'get/bannerimages',
+  () => api.get(`/get-image-name?type=banner`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
 
 export const addImage = createApiThunk(
   'add/image',
   (payload) => api.post(`/create-image-name`, payload),
   'Image Added Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const deleteImage = createApiThunk(
+  'delete/image',
+  (id) => api.delete(`/delete-image-name/${id}`),
+  'Image Deleted Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateImage = createApiThunk(
+  'update/image',
+  (reqData) => api.put(`/update-image-name/${reqData.id}`, reqData.payload),
+  'Image Updated Successfully',
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );

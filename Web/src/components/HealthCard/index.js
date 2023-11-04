@@ -19,6 +19,7 @@ export default function HealthSnapshot({
   title,
   date,
   handleEdit,
+  handleConsumed,
   filterResult,
   isDisabled,
   subheader,
@@ -56,7 +57,7 @@ export default function HealthSnapshot({
           <Scrollbar style={{ height: '50vh', minHeight: '400px' }}>
             <Stack spacing={3} sx={{ p: 3, pr: 0 }}>
               {list?.map((row) => (
-                <HealthCard key={row.id} handleEdit={handleEdit} row={row} />
+                <HealthCard key={row.id} handleConsumed={handleConsumed} handleEdit={handleEdit} row={row} />
               ))}
             </Stack>
           </Scrollbar>
@@ -84,8 +85,8 @@ HealthCard.propTypes = {
   }),
 };
 
-function HealthCard({ row, handleEdit }) {
-  const { image, title, Name, isConsumedmeal, Type, quantity, mealCompletionImage, isSkipMeal } = row;
+function HealthCard({ row, handleEdit, handleConsumed }) {
+  const { image, title, Name, isConsumedmeal, Type, quantity, mealCompletionImage, rating, comment, isSkipMeal } = row;
 
   return (
     <Stack direction="row" alignItems="center" spacing={2}>
@@ -102,11 +103,11 @@ function HealthCard({ row, handleEdit }) {
           <Tag color="yellow">{'pending'}</Tag>
         ) : isSkipMeal ? (
           <Tag color="red">{'skipped'}</Tag>
-        ) : isConsumedmeal && !mealCompletionImage ? (
-          <Tag color="green">{'consumed'}</Tag>
-        ) : (
-          <Image alt={'consumed'} src={image} style={{ width: 48, height: 48, borderRadius: 1.5, flexShrink: 0 }} />
-        )}
+        ) : isConsumedmeal ? (
+          <Tag color="green" style={{ cursor: 'pointer' }} onClick={() => handleConsumed(row)}>
+            {'consumed'}
+          </Tag>
+        ) : null}
       </Box>
       <Button onClick={() => handleEdit(row)} style={{ marginRight: '10px' }}>
         Edit

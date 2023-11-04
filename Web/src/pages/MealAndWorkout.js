@@ -19,6 +19,7 @@ import {
   Image,
   Empty,
   InputNumber,
+  Rate,
 } from 'antd';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -47,6 +48,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { border } from '@chakra-ui/react';
 import { valuesIn } from 'lodash';
+import TextArea from 'antd/es/input/TextArea';
 
 const index = 0;
 const MealAndWorkout = () => {
@@ -270,6 +272,14 @@ const MealAndWorkout = () => {
     setIsEdit({ ...isEdit, workout: false });
     const WorkoutId = selectedValues.workoutId;
   };
+  const [DrawerOpen, setDrawerOpen] = useState(false);
+  const [rowData, setrowData] = useState({});
+
+  const handleConsumed = (rowData) => {
+    setrowData(rowData);
+    console.log(rowData);
+    setDrawerOpen(true);
+  };
 
   return (
     <>
@@ -332,7 +342,7 @@ const MealAndWorkout = () => {
                             borderRadius: '10%',
                           }}
                         />
-                        <Typography.Text>{workout?.name}</Typography.Text>
+                        <Typography.Text>{workout?.workout_name}</Typography.Text>
                       </Stack>
                     </Select.Option>
                   ))}
@@ -537,11 +547,28 @@ const MealAndWorkout = () => {
           </Card>
         </Col>
         <Col span={16}>
+          <Drawer
+            title="DIET PROOF"
+            placement="right"
+            closable={false}
+            onClose={() => setDrawerOpen(false)}
+            open={DrawerOpen}
+            getContainer={false}
+          >
+            <Image width={'100%'} height={'250px'} src={rowData?.mealCompletionImage} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+              <Rate disabled defaultValue={`${rowData.rating}`} />
+            </div>
+            <div>
+              <TextArea rows={6} placeholder="" value={rowData?.comment} maxLength={6} />
+            </div>
+          </Drawer>
           {selectedType == 'Meal' ? (
             <HealthSnapshot
               title="Meal Update"
               date={filterDate.meal || null}
               filterResult={handleSetMealDate}
+              handleConsumed={handleConsumed}
               list={userMealRecommendation?.map((item, index) => ({
                 id: item._id,
                 image: item.meal?.meal_image || '',
@@ -549,6 +576,8 @@ const MealAndWorkout = () => {
                 isConsumedmeal: item.user_picked,
                 isSkipMeal: item.user_skip,
                 Name: item.meal.name,
+                comment: item.comment,
+                rating: item.rating,
                 Type: item.meal_period,
                 date: item.date,
                 quantity: `${item.quantity.value} ${item.quantity.type}`,

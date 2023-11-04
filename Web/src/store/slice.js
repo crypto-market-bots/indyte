@@ -24,6 +24,7 @@ import {
   getGoalImages,
   getActivityImages,
   getlifestyleImages,
+  getBannerImages,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -50,6 +51,7 @@ const initialState = {
     lifestyleImages: [],
     goalImages: [],
     activityImages: [],
+    bannerImages: [],
   },
   loading: {
     editMeal: false,
@@ -171,6 +173,9 @@ export const slice = createSlice({
       })
       .addCase(getActivityImages.fulfilled, (state, action) => {
         state.data.activityImages = action.payload;
+      })
+      .addCase(getBannerImages.fulfilled, (state, action) => {
+        state.data.bannerImages = action.payload;
       })
       .addCase(getlifestyleImages.fulfilled, (state, action) => {
         state.data.lifestyleImages = action.payload;
