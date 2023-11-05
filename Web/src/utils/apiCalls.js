@@ -323,3 +323,10 @@ export const updateImage = createApiThunk(
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+export const ResetPassword = createApiThunk(
+  'reset/password',
+  (payload) => api.patch(`/reset-password`, payload),
+  'Password Changed Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);

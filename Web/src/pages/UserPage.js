@@ -198,11 +198,9 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-
   useEffect(() => {
     dispatch(fetchCustomer());
   }, []);
-
 
   return (
     <>
@@ -233,9 +231,23 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { first_name, last_name, dob, email, gender, goal, height, image, phone, weight, _id } = row;
+                    const {
+                      full_name,
+                      dob,
+                      email,
+                      gender,
+                      goal,
+                      height,
+                      height_unit,
+                      current_weight,
+                      weight_unit,
+                      image,
+                      phone,
+                      weight,
+                      _id,
+                    } = row;
                     const selectedUser = selected.indexOf(email) !== -1;
-                    console.log("row==>",row)
+                    console.log('row==>', row);
 
                     return (
                       <TableRow hover key={_id} tabIndex={-1} role="checkbox" selected={selectedUser}>
@@ -245,7 +257,7 @@ export default function UserPage() {
 
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            <Avatar alt={first_name} src={image} />
+                            <Avatar alt={full_name} src={image} />
                             <Typography
                               variant="subtitle2"
                               style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
@@ -253,7 +265,7 @@ export default function UserPage() {
                               component={Link}
                               to={`/dashboard/user/customer/${_id}`}
                             >
-                              {first_name} {last_name}
+                              {full_name}
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -264,8 +276,11 @@ export default function UserPage() {
 
                         <TableCell align="left">{goal}</TableCell>
                         <TableCell align="left">{dob}</TableCell>
-                        <TableCell align="left">{height}</TableCell>
-                        <TableCell align="left">{weight}</TableCell>
+                        <TableCell align="left">{`${height} ${height_unit}`}</TableCell>
+                        <TableCell align="left">{`${current_weight} ${weight_unit}`}</TableCell>
+                        <TableCell style={{ textTransform: 'capitalize' }} align="left">
+                          {gender}
+                        </TableCell>
                       </TableRow>
                     );
                   })}

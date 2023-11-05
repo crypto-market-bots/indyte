@@ -42,7 +42,11 @@ export default function Nav({ openNav, onCloseNav }) {
   const user = useSelector((state) => state.slice.data.loggedInuserData);
   // console.log('usertyep', user.type);
   const navConfigAccordingToUserType =
-    user?.type == 'admin' ? navConfig.admin : user?.type == 'dietitian' ? navConfig.dietitian : [{ title: 'Loading...' }];
+    user?.type == 'admin'
+      ? navConfig.admin
+      : user?.type == 'dietitian'
+      ? navConfig.dietitian
+      : [{ title: 'Loading...' }];
 
   const { pathname } = useLocation();
 

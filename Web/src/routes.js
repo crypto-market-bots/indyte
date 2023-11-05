@@ -26,6 +26,7 @@ import AddMealPage from './pages/AddMealPage';
 import ManageMealPage from './pages/ManageMealPage';
 import Templates from './pages/Templates';
 import ImageGallery from './pages/ImageGallery';
+import TrackerPage from './pages/TrackerPage';
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -73,6 +74,7 @@ export default function Router() {
         { path: 'blog', element: <BlogPage /> },
         { path: 'profile', element: <ProfilePage /> },
         { path: 'templates', element: <Templates /> },
+        { path: 'tracker', element: <TrackerPage /> },
         { path: 'images', element: <ImageGallery /> },
       ],
     },

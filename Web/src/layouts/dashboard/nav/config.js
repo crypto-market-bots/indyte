@@ -82,6 +82,11 @@ var navConfig = {
       path: '/dashboard/templates',
       icon: icon('ic_cart'),
     },
+    {
+      title: 'Tracker',
+      path: '/dashboard/tracker',
+      icon: icon('ic_cart'),
+    },
   ],
 };
 

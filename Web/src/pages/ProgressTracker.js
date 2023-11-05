@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -10,7 +10,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
 import TextField from '@mui/material/TextField';
 // import typography from '@material-ui/core/typography';
-import { Typography } from '@mui/material'
+import { Typography } from '@mui/material';
 import SemiCircleProgressBar from 'react-progressbar-semicircle';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -24,7 +24,7 @@ import Tooltip from '@mui/material/Tooltip';
 // import Lunch from '../lunch.svg'
 // import Dinner from '../Dinner.svg'
 // import arrow from '../arrow.svg'
-import "../styles/card.css"
+import '../styles/card.css';
 import ImagesTracker from './ImageTracker';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -54,7 +54,6 @@ const top100Films = [
     year: 2001,
   },
 ];
-
 
 const data = [
   {
@@ -115,22 +114,21 @@ const styles = {
 export default function ProgressTracker() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-   const handleClick = (event) => {
-     setAnchorEl(event.currentTarget);
-   };
-   const handleClose = () => {
-     setAnchorEl(null);
-   };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-   // Calculate the percentage based on consumed and remaining values (0 to 300)
+  // Calculate the percentage based on consumed and remaining values (0 to 300)
   const total = 300;
   const percentage = (230 / total) * 100;
 
-  
   // Custom styles for the container
   const containerStyle = {
     height: '35%',
-    padding:'15px',
+    padding: '15px',
     backgroundColor: 'white',
     // marginTop:3,
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
@@ -164,21 +162,17 @@ export default function ProgressTracker() {
     transform: 'translate(50%, -50%)',
   };
 
-    // Custom styles for the value (270)
-    const valueStyle = {
-      position: 'absolute',
-      textAlign: 'center',
-    };
-  
-    // Custom styles for the value position (where percentage was previously displayed)
-    const valuePositionStyle = {
-      top: '60%',
-      transform: 'translateY(-50%)',
-    };
-  
-  
+  // Custom styles for the value (270)
+  const valueStyle = {
+    position: 'absolute',
+    textAlign: 'center',
+  };
 
-
+  // Custom styles for the value position (where percentage was previously displayed)
+  const valuePositionStyle = {
+    top: '60%',
+    transform: 'translateY(-50%)',
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -203,64 +197,64 @@ export default function ProgressTracker() {
                 renderInput={(params) => <TextField {...params} label="Customer" />}
               />
             </div>
-            <Typography variant="body1" sx={{ color: '#707070', mr: 2,border:'2px solid #ccc',padding:'4px 10px 4px 10px',borderRadius:10 }}>
+            <Typography
+              variant="body1"
+              sx={{ color: '#707070', mr: 2, border: '2px solid #ccc', padding: '4px 10px 4px 10px', borderRadius: 10 }}
+            >
               {new Date().toLocaleDateString()}
             </Typography>
           </Item>
         </Grid>
         <Grid item xs={4.5} spacing={3} sx={{ height: '500px', backgroundColor: 'transparent' }}>
-          <div style={{  display: 'grid', margin: '0px 10px 0px 2px',rowGap:10 }}>
-            <div style={{ display: 'flex',columnGap:10 }}>
-              <div style={{width:'50%'}} >
-                <div className="card" style={{background:'#FFF7CD',color: "#7A4F01"}}>
-                  <div className='center'>
+          <div style={{ display: 'grid', margin: '0px 10px 0px 2px', rowGap: 10 }}>
+            <div style={{ display: 'flex', columnGap: 10 }}>
+              <div style={{ width: '50%' }}>
+                <div className="card" style={{ background: '#FFF7CD', color: '#7A4F01' }}>
+                  <div className="center">
                     <div className="header">protein</div>
                     <div className="quantity">15gm</div>
                   </div>
                   <div className="image">
-                    <img src="/assets/images/protein.png" alt=""  />
+                    <img src="/assets/images/protein.png" alt="" />
                   </div>
                 </div>
               </div>
-              <div style={{width:'50%'}} >
-                <div className="card" style={{background:'#FFE7D9',color: "#7A0C2E"}}>
-                  <div className='center'>
+              <div style={{ width: '50%' }}>
+                <div className="card" style={{ background: '#FFE7D9', color: '#7A0C2E' }}>
+                  <div className="center">
                     <div className="header">Sugar</div>
                     <div className="quantity">15gm</div>
                   </div>
                   <div className="image">
-                    <img src="/assets/images/sugar.png" alt=""  />
+                    <img src="/assets/images/sugar.png" alt="" />
                   </div>
                 </div>
               </div>
-              
             </div>
-            <div style={{ display: 'flex',columnGap:10 }}>
-              <div style={{width:'50%'}} >
-                <div className="card" style={{background:'#D0F2FF',color: "#04297A"}}>
-                  <div className='center'>
+            <div style={{ display: 'flex', columnGap: 10 }}>
+              <div style={{ width: '50%' }}>
+                <div className="card" style={{ background: '#D0F2FF', color: '#04297A' }}>
+                  <div className="center">
                     <div className="header">Fat</div>
                     <div className="quantity">15gm</div>
                   </div>
                   <div className="image">
-                    <img src="/assets/images/fat.png" width={20} height={20} alt=""  />
+                    <img src="/assets/images/fat.png" width={20} height={20} alt="" />
                   </div>
                 </div>
               </div>
-              <div style={{width:'50%'}} >
-                <div className="card" style={{background:'#C1F2E1',color: "#2C5931"}}>
-                  <div className='center'>
+              <div style={{ width: '50%' }}>
+                <div className="card" style={{ background: '#C1F2E1', color: '#2C5931' }}>
+                  <div className="center">
                     <div className="header">Water</div>
                     <div className="quantity">15gm</div>
                   </div>
                   <div className="image">
-                    <img src="/assets/images/water.png" alt=""  />
+                    <img src="/assets/images/water.png" alt="" />
                   </div>
                 </div>
               </div>
-              
             </div>
-           
           </div>
           <Item
             sx={{
@@ -285,7 +279,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={'/assets/images/arrow.png'} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
           </Item>
@@ -299,7 +293,7 @@ export default function ProgressTracker() {
               justifyContent: 'space-between',
             }}
           >
-            <Avatar alt="Remy Sharp" src={"/assets/images/lunch.png"} sx={{ m: 1 }} />
+            <Avatar alt="Remy Sharp" src={'/assets/images/lunch.png'} sx={{ m: 1 }} />
             <Typography variant="h6" component="h1" sx={{ color: '#04297A' }}>
               Lunch
             </Typography>
@@ -312,7 +306,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={'/assets/images/arrow.png'} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
           </Item>
@@ -326,7 +320,7 @@ export default function ProgressTracker() {
               justifyContent: 'space-between',
             }}
           >
-            <Avatar alt="Remy Sharp" src={"/assets/images/dinner.png"} sx={{ m: 1 }} />
+            <Avatar alt="Remy Sharp" src={'/assets/images/dinner.png'} sx={{ m: 1 }} />
             <Typography variant="h6" component="h1" sx={{ color: '#04297A' }}>
               Dinner
             </Typography>
@@ -339,7 +333,7 @@ export default function ProgressTracker() {
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
               >
-                <Avatar alt="Remy Sharp" src={"/assets/images/arrow.png"} sx={{ m: 1 }} />
+                <Avatar alt="Remy Sharp" src={'/assets/images/arrow.png'} sx={{ m: 1 }} />
               </IconButton>
             </Tooltip>
             <Menu
@@ -400,71 +394,81 @@ export default function ProgressTracker() {
               height: '100%',
             }}
           >
-            <ImagesTracker/>
+            <ImagesTracker />
           </Item>
         </Grid>
-        <Grid item xs={3} sx={{ height: '600px'}} >
+        <Grid item xs={3} sx={{ height: '600px' }}>
           <Item sx={containerStyle}>
             <div>
-              <Typography textAlign={"left"}  variant='subtitle1'>Calories</Typography>
+              <Typography textAlign={'left'} variant="subtitle1">
+                Calories
+              </Typography>
             </div>
             <SemiCircleProgressBar percentage={70} showPercentValue strokeWidth="30" stroke="#4B9BFF" />
             <div style={{ ...labelStyle, ...consumedLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
-            <Typography variant='subtitile2' >Consumed </Typography><br/>
-            <Typography variant='caption'>230</Typography>
+              {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
+              <Typography variant="subtitile2">Consumed </Typography>
+              <br />
+              <Typography variant="caption">230</Typography>
             </div>
             <div style={{ ...labelStyle, ...remainingLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
-            <Typography variant='subtitile2' >Remaining</Typography><br/>
-            <Typography variant='caption' >70</Typography>
+              {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
+              <Typography variant="subtitile2">Remaining</Typography>
+              <br />
+              <Typography variant="caption">70</Typography>
             </div>
             {/* <Typography style={{ ...valueStyle, ...valuePositionStyle }} variant='caption'>270</Typography> */}
           </Item>
-          <Item sx={containerStyle} style={{marginTop:4}}>
+          <Item sx={containerStyle} style={{ marginTop: 4 }}>
             <div>
-              <Typography textAlign={"left"}  variant='subtitle1'>Step</Typography>
+              <Typography textAlign={'left'} variant="subtitle1">
+                Step
+              </Typography>
             </div>
             <img
-              src={"/assets/images/running.png"}
+              src={'/assets/images/running.png'}
               loading="lazy"
               alt="nothing"
               style={{ height: '100px', width: '100px', alignItems: 'center', justifyContent: 'center' }}
             />
             <div style={{ ...labelStyle, ...consumedLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
-            <Typography variant='subtitile2' >Total</Typography><br/>
-            <Typography variant='caption'>2000</Typography>
+              {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
+              <Typography variant="subtitile2">Total</Typography>
+              <br />
+              <Typography variant="caption">2000</Typography>
             </div>
             <div style={{ ...labelStyle, ...remainingLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
-            <Typography variant='subtitile2' >Target</Typography><br/>
-            <Typography variant='caption' >5000</Typography>
+              {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
+              <Typography variant="subtitile2">Target</Typography>
+              <br />
+              <Typography variant="caption">5000</Typography>
             </div>
             {/* <Typography style={{ ...valueStyle, ...valuePositionStyle }} variant='caption'>270</Typography> */}
           </Item>
-          <Item sx={containerStyle} style={{marginTop:4}}>
+          <Item sx={containerStyle} style={{ marginTop: 4 }}>
             <div>
-              <Typography textAlign={"left"}  variant='subtitle1'>Water</Typography>
+              <Typography textAlign={'left'} variant="subtitle1">
+                Water
+              </Typography>
             </div>
             <SemiCircleProgressBar percentage={70} showPercentValue strokeWidth="30" stroke="#4B9BFF" />
             <div style={{ ...labelStyle, ...consumedLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
-            <Typography variant='subtitile2' >Consumed </Typography><br/>
-            <Typography variant='caption'>2L</Typography>
+              {/* <Typography variant='caption' color={"GrayText"}  >0</Typography><br/> */}
+              <Typography variant="subtitile2">Consumed </Typography>
+              <br />
+              <Typography variant="caption">2L</Typography>
             </div>
             <div style={{ ...labelStyle, ...remainingLabelStyle }}>
-            {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
-            <Typography variant='subtitile2' >Remaining</Typography><br/>
-            <Typography variant='caption' >1L</Typography>
+              {/* <Typography variant='caption' color={"GrayText"} >300</Typography><br/> */}
+              <Typography variant="subtitile2">Remaining</Typography>
+              <br />
+              <Typography variant="caption">1L</Typography>
             </div>
             {/* <Typography style={{ ...valueStyle, ...valuePositionStyle }} variant='caption'>270</Typography> */}
           </Item>
           {/* <Item sx={{ height: '33%', m: 1, backgroundColor: '#9099B7' }}>
             <SemiCircleProgressBar percentage={33} showPercentValue strokeWidth="30" stroke="#4B9BFF" />
           </Item> */}
-
-        
         </Grid>
       </Grid>
     </Box>

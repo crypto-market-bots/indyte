@@ -25,6 +25,7 @@ import {
   getActivityImages,
   getlifestyleImages,
   getBannerImages,
+  ResetPassword,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -180,6 +181,14 @@ export const slice = createSlice({
       .addCase(getlifestyleImages.fulfilled, (state, action) => {
         state.data.lifestyleImages = action.payload;
       });
+    // .addCase(ResetPassword.pending, (state, action) => {
+    //   state.success.resetPassword = action.payload.success;
+    //   state.loading.resetPassword = true;
+    // })
+    // .addCase(ResetPassword.fulfilled, (state, action) => {
+    //   state.success.resetPassword = action.payload.success;
+    //   state.loading.resetPassword = false;
+    // });
   },
 });
 

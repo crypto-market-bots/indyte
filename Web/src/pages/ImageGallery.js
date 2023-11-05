@@ -326,14 +326,14 @@ const ImageGallery = () => {
           <Card style={{ padding: '20px', margin: 10 }}>
             <Row gutter={[16, 16]} style={{ display: 'flex', alignItems: 'center' }}>
               {category?.value?.map((activity, index) => (
-                <Col xs={8} sm={6} lg={6} xxl={3} style={style} key={index}>
+                <Col xs={8} sm={6} lg={4} xxl={3} style={style} key={index}>
                   <AntCard
                     style={{ padding: '0px' }}
                     title={
                       isEditable[activity?._id] ? (
                         <TextField
                           placeholder="Enter Title"
-                          value={(edited[activity?._id] && edited[activity?._id]['title']) || ''}
+                          value={activity?.name}
                           onChange={(e) =>
                             setEdited({
                               ...edited,
