@@ -346,6 +346,7 @@ export default function HistoryPage() {
             >
               <Select.Option value="meal">Meal</Select.Option>
               <Select.Option value="workout">Workout</Select.Option>
+              <Select.Option value="weight">Weight</Select.Option>
             </Select>
           </Col>
           {/* <Col span={5}>
