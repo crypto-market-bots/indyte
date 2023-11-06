@@ -32,7 +32,7 @@ import {
   updateEquipment,
 } from 'src/utils/apiCalls';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchSingleMealData, EditMeal } from 'src/utils/apiCalls';
 import { IconButton, Stack } from '@mui/material';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
@@ -40,11 +40,13 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import 'src/index.css';
 import { object, string } from 'prop-types';
 import { DeleteOutlined } from '@mui/icons-material';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 const { Title } = Typography;
 
 const AddMealPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -136,6 +138,7 @@ const AddMealPage = () => {
       default:
         break;
     }
+    handleGoBack();
   };
 
   useEffect(() => {
@@ -492,6 +495,10 @@ const AddMealPage = () => {
     });
   };
 
+  const handleGoBack = () => {
+    navigate(`/dashboard/templates?type=${type}`);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -499,6 +506,9 @@ const AddMealPage = () => {
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
           <Card style={{ width: '100%', maxWidth: '1000px' }}>
+            <Button onClick={handleGoBack}>
+              <ArrowBack />
+            </Button>
             <Form layout="vertical" onFinish={onFinish} initialValues={initialFormValues}>
               <Title level={3}>{!id ? `Create a New ${type}` : `Update ${type}`}</Title>
               <Row justify={'space-between'}>

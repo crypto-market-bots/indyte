@@ -150,14 +150,13 @@ export default function HistoryPage() {
           { id: 'mealtype', label: 'Meal Type', alignRight: false },
           { id: 'date', label: 'Date', alignRight: false },
           { id: 'status', label: 'Status', alignRight: false },
-          { id: '' },
+          { id: 'assignedBy', label: 'Assigned By', alignRight: false },
         ]
       : [
           { id: 'name', label: 'Workout', alignRight: false },
           { id: 'difficulty', label: 'Difficulty', alignRight: false },
           { id: 'date', label: 'Date', alignRight: false },
           { id: 'status', label: 'Status', alignRight: false },
-          { id: '' },
         ];
 
   const options = customers.map((customer, index) => {
@@ -272,19 +271,16 @@ export default function HistoryPage() {
   }
 
   const [DrawerOpen, setDrawerOpen] = useState(false);
-  const showDrawer = () => {
+  const [consumedRow, setConsumedRow] = useState([]);
+  const showDrawer = (item) => {
+    setConsumedRow(item);
     setDrawerOpen(true);
   };
   const onClose = () => {
     setDrawerOpen(false);
   };
   const containerStyle = {
-    // position: 'relative',
-    // height: '100%',
-    // padding: 48,
     overflow: 'hidden',
-    // textAlign: 'center',
-    // background: 'white',
     borderRadius: '5px',
   };
   return (
@@ -363,19 +359,12 @@ export default function HistoryPage() {
             open={DrawerOpen}
             getContainer={false}
           >
-            <Image width={'100%'} height={'250px'} src="https://takethemameal.com/files_images_v2/stam.jpg" />
+            <Image width={'100%'} height={'250px'} src={consumedRow?.meal_image_proof} />
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-              <Rate disabled defaultValue={2.5} />
+              <Rate disabled defaultValue={consumedRow?.rating} />
             </div>
             <div>
-              <TextArea
-                rows={6}
-                placeholder=""
-                value={
-                  "Thank you for providing me with this nutritious meal plan! I'm committed to following it diligently. I'll make sure to document each meal with a photo to show my progress. Looking forward to a healthier me!"
-                }
-                maxLength={6}
-              />
+              <TextArea rows={6} placeholder="" value={consumedRow?.comment} maxLength={6} />
             </div>
           </Drawer>
           <UserListToolbar
@@ -485,7 +474,7 @@ export default function HistoryPage() {
                             <TableCell align="left">{formatDate(item?.date)}</TableCell>
                             <TableCell
                               align="left"
-                              onClick={item?.user_picked && showDrawer}
+                              onClick={(e, rowData) => item?.user_picked && showDrawer(item)}
                               style={{ cursor: item?.user_picked && 'pointer' }}
                             >
                               {!item?.user_picked && !item?.user_skip ? (
@@ -497,21 +486,10 @@ export default function HistoryPage() {
                               )}
                               {/* <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label> */}
                             </TableCell>
-
-                            <TableCell align="right">
-                              <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
-                                <Iconify icon={'eva:more-vertical-fill'} />
-                              </IconButton>
-                            </TableCell>
+                            <TableCell align="left">{`${item?.assigned_by?.first_name} ${item?.assigned_by?.last_name}`}</TableCell>
                           </TableRow>
                         );
                       })}
-
-                      {/* {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )} */}
                     </TableBody>
                   )}
                 </Table>
