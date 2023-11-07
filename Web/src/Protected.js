@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 const Protected = ({ Component }) => {
   const token = localStorage.getItem('token');
 
-  if (!token) {
+  if (!token || token == 'undefined') {
     // Redirect to the login page if the user is not authenticated
     return <Navigate to="/login" />;
   }

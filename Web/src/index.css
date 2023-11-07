@@ -31,3 +31,6 @@
 .custom-dragger:hover {
   border-color: #1890ff;
 }
+iframe {
+  display: none;
+}
