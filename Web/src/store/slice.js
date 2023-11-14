@@ -26,6 +26,7 @@ import {
   getlifestyleImages,
   getBannerImages,
   ResetPassword,
+  getWeights,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -53,6 +54,7 @@ const initialState = {
     goalImages: [],
     activityImages: [],
     bannerImages: [],
+    weights: [],
   },
   loading: {
     editMeal: false,
@@ -180,15 +182,10 @@ export const slice = createSlice({
       })
       .addCase(getlifestyleImages.fulfilled, (state, action) => {
         state.data.lifestyleImages = action.payload;
+      })
+      .addCase(getWeights.fulfilled, (state, action) => {
+        state.data.weights = action.payload;
       });
-    // .addCase(ResetPassword.pending, (state, action) => {
-    //   state.success.resetPassword = action.payload.success;
-    //   state.loading.resetPassword = true;
-    // })
-    // .addCase(ResetPassword.fulfilled, (state, action) => {
-    //   state.success.resetPassword = action.payload.success;
-    //   state.loading.resetPassword = false;
-    // });
   },
 });
 

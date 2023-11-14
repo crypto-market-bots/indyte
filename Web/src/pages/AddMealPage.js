@@ -213,6 +213,7 @@ const AddMealPage = () => {
       <Form.List name={name}>
         {(fields, { add, remove }) => (
           <div>
+            {console.log('fields', fields)}
             {fields.map((field, index) => (
               <Row key={field.key} gutter={16} align={'middle'}>
                 {inputFields.map(({ label, nameKey, rules, placeholder, inputType, options }) => (

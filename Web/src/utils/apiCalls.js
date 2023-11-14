@@ -330,3 +330,18 @@ export const ResetPassword = createApiThunk(
   (response) => response.data,
   (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
 );
+
+export const getWeights = createApiThunk(
+  'get/weights',
+  (payload) => api.get(`/get-weights?id=${payload.id}&type=${payload.type}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateWeights = createApiThunk(
+  'put/weights',
+  (payload) => api.put(`/update-weight-status`, payload),
+  (response) => response.data.message,
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);

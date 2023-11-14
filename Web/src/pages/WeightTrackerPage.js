@@ -9,7 +9,6 @@ import {
   Stack,
   Paper,
   Avatar,
-  Button,
   Popover,
   Checkbox,
   TableRow,
@@ -27,7 +26,23 @@ import {
 
 import { Link } from 'react-router-dom';
 // components
-import { AutoComplete, Col, DatePicker, Empty, Input, Row, Segmented, Select, Spin, Tag } from 'antd';
+import {
+  AutoComplete,
+  Col,
+  DatePicker,
+  Empty,
+  Form,
+  Input,
+  Button,
+  InputNumber,
+  Modal,
+  Row,
+  Segmented,
+  Select,
+  Space,
+  Spin,
+  Tag,
+} from 'antd';
 import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -37,7 +52,8 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 import USERLIST from '../_mock/user';
 import { CloseSquareFilled } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCustomer, fetchCustomerDetails, fetchHistory } from 'src/utils/apiCalls';
+import { fetchCustomer, fetchCustomerDetails, fetchHistory, getWeights, updateWeights } from 'src/utils/apiCalls';
+import { useForm } from 'antd/es/form/Form';
 // ----------------------------------------------------------------------
 
 // ----------------------------------------------------------------------
@@ -95,11 +111,13 @@ export default function WeightTrackerPage() {
   const [filterName, setFilterName] = useState('');
 
   const history = useSelector((state) => state.slice.data.history?.data);
+  const weights = useSelector((state) => state.slice.data.weights);
 
   const [filteredHistory, setFilteredHistory] = useState(history);
-  console.log('top filter is ', filteredHistory);
 
   const [perPage, setPerPage] = useState(5);
+
+  const [selectedRow, setSelectedRow] = useState({});
 
   const customers = useSelector((state) => state.slice.data.customers);
 
@@ -109,41 +127,35 @@ export default function WeightTrackerPage() {
   const [selectedValues, setSelectedValues] = useState({
     user: null,
     date: null,
-    type: 'meal',
+    type: 'pending',
   });
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    callHistoryApi();
+    callGetWeightsApi();
   }, [selectedValues, page, perPage]);
 
-  const callHistoryApi = async () => {
+  const callGetWeightsApi = async () => {
+    console.log(selectedValues);
     if (selectedValues.user) {
-      const payload = { user_id: selectedValues.user, type: selectedValues.type };
-      await dispatch(fetchHistory({ page: page + 1, perPage, payload })).then((action) =>
-        setFilteredHistory(action.payload.data)
-      );
+      const payload = { id: selectedValues.user, type: selectedValues.type };
+      await dispatch(getWeights(payload));
     }
   };
 
-  const TABLE_HEAD =
-    selectedValues.type === 'meal'
-      ? [
-          { id: 'name', label: 'Diet', alignRight: false },
-          { id: 'quantity', label: 'Quantity', alignRight: false },
-          { id: 'mealtype', label: 'Meal Type', alignRight: false },
-          { id: 'date', label: 'Date', alignRight: false },
-          { id: 'status', label: 'Status', alignRight: false },
-          { id: '' },
-        ]
-      : [
-          { id: 'name', label: 'Workout', alignRight: false },
-          { id: 'difficulty', label: 'Difficulty', alignRight: false },
-          { id: 'date', label: 'Date', alignRight: false },
-          { id: 'status', label: 'Status', alignRight: false },
-          { id: '' },
-        ];
+  const handleSelectCustomer = (selectedCustomer) => {
+    setselectedCustomerName(selectedCustomer);
+  };
+
+  const TABLE_HEAD = [
+    { id: 'proof_image', label: 'Proof Image', alignRight: false },
+    { id: 'current_weight', label: 'Current Weight', alignRight: false },
+    { id: 'goal_weight', label: 'Goal Weight', alignRight: false },
+    { id: 'createdAt', label: 'Date', alignRight: false },
+    { id: 'status', label: 'Status', alignRight: false },
+    { id: 'action', label: 'Action', alignRight: false },
+  ];
 
   const options = customers.map((customer, index) => {
     return {
@@ -154,6 +166,7 @@ export default function WeightTrackerPage() {
       weight: customer.current_weight,
     };
   });
+  const [selectedCustomerName, setselectedCustomerName] = useState('');
 
   useEffect(() => {
     dispatch(fetchCustomer());
@@ -216,8 +229,9 @@ export default function WeightTrackerPage() {
     setFilteredHistory(filterResult);
   };
 
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = (event, rowData) => {
     setOpen(event.currentTarget);
+    setSelectedRow(rowData);
   };
 
   const handleCloseMenu = () => {
@@ -231,7 +245,6 @@ export default function WeightTrackerPage() {
   const handleCloseFilter = () => {
     setOpenFilter(null);
   };
-  const [selectedCustomerName, setselectedCustomerName] = useState('');
 
   const handleSelect = async (value, option) => {
     if (option && option.customerId) {
@@ -256,10 +269,70 @@ export default function WeightTrackerPage() {
     return date.toLocaleDateString('en-US', options);
   }
 
+  const [editRowData, setEditRowData] = useState({});
+  const handleEdit = async () => {
+    await setEditRowData({
+      current_weight: selectedRow?.current_weight,
+      goal_weight: selectedRow?.goal_weight,
+      status: selectedRow?.status,
+    });
+    setIsModalOpen(true);
+    setOpen(false);
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const { Option } = Select;
+
+  const formItemLayout = {
+    labelCol: { span: 24 },
+    wrapperCol: { span: 24 },
+  };
+
+  const onFinish = async (values) => {
+    console.log('Received values of form: ', values);
+    const payload = {
+      ...values,
+      user_id: selectedRow?.user,
+      weight_tracking_id: selectedRow?._id,
+    };
+    await dispatch(updateWeights(payload));
+    if (selectedValues.user) {
+      const payload = { id: selectedValues.user, type: selectedValues.type };
+      await dispatch(getWeights(payload));
+    }
+    setIsModalOpen(false);
+  };
+
+  // Inside your component...
+  const [form] = useForm();
+
+  // Ensure you update the form fields when selectedRow changes
+  useEffect(() => {
+    if (selectedRow) {
+      form.setFieldsValue({
+        status: selectedRow.status,
+        current_weight: selectedRow.current_weight,
+        goal_weight: selectedRow.goal_weight,
+      });
+    }
+  }, [selectedRow]);
   return (
     <>
       <Helmet>
-        <title> History | Minimal UI </title>
+        <title> Weight Tracker | Minimal UI </title>
       </Helmet>
 
       <Container>
@@ -288,7 +361,7 @@ export default function WeightTrackerPage() {
               filterOption={(inputValue, option) =>
                 option.customerName.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
               }
-              onChange={(value) => setselectedCustomerName(value)}
+              onChange={handleSelectCustomer}
               onSelect={handleSelect}
               size="large"
             >
@@ -313,8 +386,10 @@ export default function WeightTrackerPage() {
               }}
               // style={{ width: '100%' }}
             >
-              <Select.Option value="meal">Meal</Select.Option>
-              <Select.Option value="workout">Workout</Select.Option>
+              <Select.Option value="pending">Pending</Select.Option>
+              <Select.Option value="approved">Approved</Select.Option>
+              <Select.Option value="rejected">Rejected</Select.Option>
+              <Select.Option value="edit">Edited</Select.Option>
             </Select>
           </Col>
           {/* <Col span={5}>
@@ -323,13 +398,13 @@ export default function WeightTrackerPage() {
         </Row>
 
         <Card>
-          <UserListToolbar
+          {/* <UserListToolbar
             numSelected={selected.length}
             history={history}
-            filterName={filterName}
-            onFilterName={searchFilter}
-            openMenu={handleOpenFilter}
-          />
+            // filterName={filterName}
+            // onFilterName={searchFilter}
+            // openMenu={handleOpenFilter}
+          /> */}
 
           <Scrollbar>
             <Spin spinning={isHistoryLoading}>
@@ -344,7 +419,7 @@ export default function WeightTrackerPage() {
                     onRequestSort={handleRequestSort}
                     onSelectAllClick={handleSelectAllClick}
                   />
-                  {selectedValues.user == null || !history?.length ? (
+                  {selectedValues.user == null || !weights?.length ? (
                     <TableBody>
                       <TableRow>
                         <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
@@ -362,97 +437,59 @@ export default function WeightTrackerPage() {
                     </TableBody>
                   ) : (
                     <TableBody>
-                      {filteredHistory?.map((item) => {
+                      {weights?.map((item) => {
                         const selectedUser = selected.indexOf(item?.meal?.name) !== -1;
 
                         return (
-                          <TableRow hover key={item?._id} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                            <>
-                              {selectedValues.type == 'meal' ? (
-                                <>
-                                  <TableCell padding="checkbox">
-                                    <Checkbox
-                                      checked={selectedUser}
-                                      onChange={(event) => handleClick(event, item?.meal?.name)}
-                                    />
-                                  </TableCell>
-
-                                  <TableCell component="th" scope="row" padding="none">
-                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                      <Avatar alt={item?.meal?.name} src={item?.meal?.meal_image} />
-                                      <Typography
-                                        variant="subtitle2"
-                                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                                        noWrap
-                                        component={Link}
-                                        to={`/dashboard/user/customer/id`}
-                                      >
-                                        {item?.meal?.name}
-                                      </Typography>
-                                    </Stack>
-                                  </TableCell>
-
-                                  <TableCell align="left">
-                                    {item?.quantity?.value + ' ' + item?.quantity?.type}
-                                  </TableCell>
-
-                                  <TableCell align="left">{item?.meal_period}</TableCell>
-                                </>
-                              ) : (
-                                <>
-                                  <TableCell padding="checkbox">
-                                    <Checkbox
-                                      checked={selectedUser}
-                                      onChange={(event) => handleClick(event, item?.workout_id?.name)}
-                                    />
-                                  </TableCell>
-
-                                  <TableCell component="th" scope="row" padding="none">
-                                    <Stack direction="row" alignItems="center" spacing={2}>
-                                      <Avatar alt={item?.workout_id?.name} src={item?.workout_id?.image} />
-                                      <Typography
-                                        variant="subtitle2"
-                                        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-                                        noWrap
-                                        component={Link}
-                                        to={`/dashboard/user/customer/id`}
-                                      >
-                                        {item?.workout_id?.name}
-                                      </Typography>
-                                    </Stack>
-                                  </TableCell>
-
-                                  <TableCell align="left">{item?.difficulty}</TableCell>
-                                </>
-                              )}
-                            </>
-
-                            <TableCell align="left">{formatDate(item?.date)}</TableCell>
-                            <TableCell align="left">
-                              {!item?.user_picked && !item?.user_skip ? (
-                                <Tag color="yellow">{'pending'}</Tag>
-                              ) : item?.user_skip ? (
-                                <Tag color="red">{'skipped'}</Tag>
-                              ) : (
-                                item?.user_picked && <Tag color="green">{'consumed'}</Tag>
-                              )}
-                              {/* <Label color={(status === 'banned' && 'error') || 'success'}>{sentenceCase(status)}</Label> */}
+                          <TableRow
+                            hover
+                            key={item?._id}
+                            // sx={{ width: '100%' }}
+                            tabIndex={-1}
+                            role="checkbox"
+                            selected={selectedUser}
+                          >
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={selectedUser}
+                                onChange={(event) => handleClick(event, item?.meal?.name)}
+                              />
                             </TableCell>
 
-                            <TableCell align="right">
-                              <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                            <TableCell align="left">
+                              <Stack direction="row" display={'flex'} justifyContent={'start'} alignItems="center">
+                                <Avatar
+                                  alt={'proof image'}
+                                  style={{ width: '60px', height: '60px' }}
+                                  src={item?.proof_image}
+                                />
+                              </Stack>
+                            </TableCell>
+
+                            <TableCell align="left">{`${item?.current_weight} kg`}</TableCell>
+
+                            <TableCell align="left">{`${item?.goal_weight} kg`}</TableCell>
+                            <TableCell align="left">{formatDate(item?.createdAt)}</TableCell>
+                            <TableCell align="left">
+                              {item?.status === 'pending' ? (
+                                <Tag color="yellow">pending</Tag>
+                              ) : item?.status === 'approved' ? (
+                                <Tag color="green">approved</Tag>
+                              ) : item?.status === 'rejected' ? (
+                                <Tag color="red">rejected</Tag>
+                              ) : (
+                                <Tag color="blue">edited</Tag>
+                              )}
+                            </TableCell>
+
+                            <TableCell align="left">
+                              <IconButton size="large" color="inherit" onClick={(e) => handleOpenMenu(e, item)}>
                                 <Iconify icon={'eva:more-vertical-fill'} />
                               </IconButton>
                             </TableCell>
                           </TableRow>
                         );
                       })}
-
-                      {/* {emptyRows > 0 && (
-                        <TableRow style={{ height: 53 * emptyRows }}>
-                          <TableCell colSpan={6} />
-                        </TableRow>
-                      )} */}
                     </TableBody>
                   )}
                 </Table>
@@ -471,22 +508,45 @@ export default function WeightTrackerPage() {
           />
         </Card>
       </Container>
-      <Popover
-        open={Boolean(openFilter)}
-        anchorEl={openFilter}
-        onClose={handleCloseFilter}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuItem value="" style={{ fontWeight: 'bold', color: '#333' }}>
-          <em>All</em>
-        </MenuItem>
-        {GOALS.map((goal) => (
-          <MenuItem key={goal} value={goal}>
-            {goal}
-          </MenuItem>
-        ))}
-      </Popover>
+      <Modal title="Edit Data" footer={null} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Form
+          name="validate_other"
+          {...formItemLayout}
+          onFinish={onFinish}
+          layout="vertical"
+          style={{ width: '100%' }}
+          form={form} // Ensure you have access to the form instance
+        >
+          <Form.Item
+            name="status"
+            label="Status"
+            hasFeedback
+            rules={[{ required: true, message: 'Please select a status' }]}
+          >
+            <Select placeholder="Please select a status">
+              <Option value="approved">Approved</Option>
+              <Option value="rejected">Rejected</Option>
+              <Option value="edit">Edited</Option>
+            </Select>
+          </Form.Item>
+
+          <Form.Item name="current_weight" label="Current Weight">
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item name="goal_weight" label="Goal Weight">
+            <Input />
+          </Form.Item>
+
+          <Form.Item style={{ display: 'flex', justifyContent: 'end' }}>
+            <Space>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Modal>
 
       <Popover
         open={Boolean(open)}
@@ -506,15 +566,15 @@ export default function WeightTrackerPage() {
           },
         }}
       >
-        <MenuItem>
+        <MenuItem onClick={handleEdit}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
-
+        {/* 
         <MenuItem sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </Popover>
     </>
   );
