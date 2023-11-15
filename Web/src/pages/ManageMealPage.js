@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { Input, Select, Card, Row, Col, Typography, Button, Popconfirm, message, notification } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { Grid } from '@mui/material';
 const { Meta } = Card;
 
 const ManageMealPage = ({ type }) => {
@@ -113,16 +114,26 @@ const ManageMealPage = ({ type }) => {
           + Add {type}
         </Button>
       </div>
-      <Row gutter={[16, 16]}>
-        {!filteredData?.length && 'No Meal Found'}
+      <Grid
+        direction={'row'}
+        gap={2}
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignContent: 'flex-start',
+        }}
+      >
+        {!filteredData?.length && `No ${type} Found`}
         {filteredData?.map((item) => (
-          <Col key={item._id} xs={24} sm={12} md={6} xxl={5} style={{ gap: 10 }}>
+          <Grid item key={item._id} xs={24} sm={12} md={4} xl={4} xxl={4}>
             <Card
               style={{ width: 250, marginRight: 2, boxShadow: '100px' }}
               cover={
                 <img
                   alt="example"
-                  src={type == 'Meal' ? item.meal_image : item.image}
+                  src={
+                    type == 'Meal' ? item.meal_image : type === 'Exercise' ? item.exercise_image : item.workout_image
+                  }
                   style={{ height: '200px', objectFit: 'cover' }}
                 />
               } // Set the image height and object-fit
@@ -166,9 +177,9 @@ const ManageMealPage = ({ type }) => {
                 }
               />
             </Card>
-          </Col>
+          </Grid>
         ))}
-      </Row>
+      </Grid>
     </div>
   );
 };

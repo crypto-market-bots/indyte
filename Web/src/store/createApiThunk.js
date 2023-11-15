@@ -18,12 +18,17 @@ export const createApiThunk = (name, apiCall, successMessage, transformResponse,
       }
       if (response) return transformResponse(response);
     } catch (error) {
-      const errorMessage = transformErrorMessage(error);
-      console.log('errorMessage', errorMessage);
-      //   show error message
-      showErrorNotification(errorMessage);
-      //   return the error response
-      return transformResponse(error.response);
+      if (error.response.status === 401) {
+        // Redirect to the login page
+        window.location.href = '/login';
+      } else {
+        const errorMessage = transformErrorMessage(error);
+        //   show error message
+        if (errorMessage) showErrorNotification(errorMessage);
+
+        //   return the error response
+        return transformResponse(error.response);
+      }
     }
   });
 

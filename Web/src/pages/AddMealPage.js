@@ -32,7 +32,7 @@ import {
   updateEquipment,
 } from 'src/utils/apiCalls';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { fetchSingleMealData, EditMeal } from 'src/utils/apiCalls';
 import { IconButton, Stack } from '@mui/material';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
@@ -40,11 +40,13 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import 'src/index.css';
 import { object, string } from 'prop-types';
 import { DeleteOutlined } from '@mui/icons-material';
+import ArrowBack from '@mui/icons-material/ArrowBack';
 
 const { Title } = Typography;
 
 const AddMealPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { id } = useParams();
 
@@ -67,6 +69,12 @@ const AddMealPage = () => {
   const isAddEquipmentLoading = useSelector((state) => state.slice.loading.addEquipment);
   const isUpdateEquipmentLoading = useSelector((state) => state.slice.loading.updateEquipment);
   const equipments = useSelector((state) => state.slice.data.equipments);
+  console.log(WorkoutData);
+  //update loadings
+  const isEditMealLoading = useSelector((state) => state.slice.loading.editMeal);
+  const isAddMealLoading = useSelector((state) => state.slice.loading.addMeal);
+
+  const loading = isEditMealLoading || isAddMealLoading;
 
   const isLoading =
     type == 'Meal'
@@ -79,52 +87,72 @@ const AddMealPage = () => {
 
   let initialFormValues = { type };
   if (id) {
-    const workoutIndex = WorkoutData.findIndex((workout) => workout._id === id);
+    // const workoutIndex = WorkoutData?.findIndex((workout) => workout._id === id);
+    // console.log('WorkoutData', WorkoutData);
 
     initialFormValues =
       type === 'Meal'
-        ? { ...MealData, type, image: MealData.meal_image }
+        ? { ...MealData, type, image: MealData?.meal_image }
         : type === 'Exercise'
-        ? { ...ExerciseData, type }
+        ? { ...ExerciseData, type, image: ExerciseData?.exercise_image }
         : type === 'Workout'
-        ? { ...(WorkoutData[workoutIndex] || {}), type }
+        ? { ...WorkoutData, type, image: WorkoutData?.workout_image }
         : {};
   }
 
   const onFinish = (values) => {
     // For Add
-    if (type === 'Meal') {
-      const formData = new FormData();
-      for (const key in values) {
-        if (values.hasOwnProperty(key)) {
-          if (key == 'nutritions' || key == 'required_ingredients' || key == 'steps') {
-            formData.append(key, JSON.stringify(values[key]));
-          } else formData.append(key, values[key]);
-        }
+    const formData = new FormData();
+    for (const key in values) {
+      if (values.hasOwnProperty(key)) {
+        if (
+          key === 'nutritions' ||
+          key === 'required_ingredients' ||
+          key === 'steps' ||
+          key === 'exercises' ||
+          key === 'physical_equipments'
+        ) {
+          formData.append(key, JSON.stringify(values[key]));
+        } else formData.append(key, values[key]);
       }
-      formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
-      if (!id) dispatch(addMeal(formData));
-      else dispatch(EditMeal({ id, formData }));
     }
-    if (!id) {
-      if (type === 'Exercise') dispatch(addExercise(values));
-      else if (type === 'Workout') dispatch(addWorkout(values));
-    }
-    // For Edit
-    else {
-      values = { ...values, type: type, image: selectedFile ? selectedFile : initialFormValues.image };
+    switch (type) {
+      case 'Meal':
+        formData.append('meal_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addMeal(formData));
+        else dispatch(EditMeal({ id, formData }));
+        break;
 
-      if (type === 'Exercise' && id) dispatch(EditExercise({ id, ...values }));
-      else if (type === 'Workout' && id) dispatch(EditWorkout({ id, ...values }));
+      case 'Workout':
+        formData.append('workout_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addWorkout(formData));
+        else dispatch(EditWorkout({ id, formData }));
+        break;
+
+      case 'Exercise':
+        formData.append('exercise_image', selectedFile ? selectedFile : initialFormValues.image);
+        if (!id) dispatch(addExercise(formData));
+        else dispatch(EditExercise({ id, formData }));
+        break;
+
+      default:
+        break;
     }
+    handleGoBack();
   };
 
   useEffect(() => {
-    if (!id) type == 'Workout' && dispatch(fetchAllExercises());
-    else if (id) {
-      if (type == 'Meal') dispatch(fetchSingleMealData(id));
-      else if (type == 'Exercise') dispatch(fetchSingleExercise(id));
-      else if (type == 'Workout') {
+    if (!id) {
+      if (type == 'Workout') {
+        dispatch(fetchAllExercises());
+        dispatch(fetchAllEquipment()).then((res) => {
+          setEquipmentList(res.payload);
+        });
+      }
+    } else if (id) {
+      if (type === 'Meal') dispatch(fetchSingleMealData(id));
+      else if (type === 'Exercise') dispatch(fetchSingleExercise(id));
+      else if (type === 'Workout') {
         dispatch(fetchAllExercises());
         dispatch(fetchSingleWorkout(id));
         dispatch(fetchAllEquipment()).then((res) => {
@@ -146,6 +174,10 @@ const AddMealPage = () => {
     {
       value: 'protein',
       label: 'Protein',
+    },
+    {
+      value: 'calorie',
+      label: 'Calorie',
     },
   ];
   const difficulty_levels = [
@@ -181,6 +213,7 @@ const AddMealPage = () => {
       <Form.List name={name}>
         {(fields, { add, remove }) => (
           <div>
+            {console.log('fields', fields)}
             {fields.map((field, index) => (
               <Row key={field.key} gutter={16} align={'middle'}>
                 {inputFields.map(({ label, nameKey, rules, placeholder, inputType, options }) => (
@@ -254,11 +287,11 @@ const AddMealPage = () => {
                 {' '}
                 + Add {name.replace(/_/g, ' ').toLowerCase()}
               </Button>
-              {type == 'Workout' && (
+              {/* {type == 'Workout' && (
                 <Button type="primary" style={{ marginTop: '5px', marginLeft: '5px' }} onClick={openModal}>
                   Manage Equipment
                 </Button>
-              )}
+              )} */}
             </Form.Item>
           </div>
         )}
@@ -329,7 +362,7 @@ const AddMealPage = () => {
     label: (
       <Stack direction={'row'} alignItems={'center'}>
         <Image
-          src={exercise.image}
+          src={exercise.exercise_image}
           alt={exercise.name}
           style={{ width: '30px', height: '30px', marginRight: '8px', borderRadius: '10%' }}
         />
@@ -337,6 +370,20 @@ const AddMealPage = () => {
       </Stack>
     ),
     value: exercise._id,
+  }));
+
+  const equipmentOptions = equipments?.map((equipment) => ({
+    label: (
+      <Stack direction={'row'} alignItems={'center'}>
+        <Image
+          src={equipment.equipment_image}
+          alt={equipment.equipment_name}
+          style={{ width: '30px', height: '30px', marginRight: '8px', borderRadius: '10%' }}
+        />
+        <Typography.Text>{equipment.equipment_name}</Typography.Text>
+      </Stack>
+    ),
+    value: equipment._id,
   }));
 
   const stepsFields = [
@@ -449,6 +496,10 @@ const AddMealPage = () => {
     });
   };
 
+  const handleGoBack = () => {
+    navigate(`/dashboard/templates?type=${type}`);
+  };
+
   return (
     <>
       {isLoading ? (
@@ -456,8 +507,11 @@ const AddMealPage = () => {
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
           <Card style={{ width: '100%', maxWidth: '1000px' }}>
+            <Button onClick={handleGoBack}>
+              <ArrowBack />
+            </Button>
             <Form layout="vertical" onFinish={onFinish} initialValues={initialFormValues}>
-              <Title level={3}>Create a New {type}</Title>
+              <Title level={3}>{!id ? `Create a New ${type}` : `Update ${type}`}</Title>
               <Row justify={'space-between'}>
                 <Col span={11}>
                   <Form.Item label="Name" name="name" rules={[{ required: true, message: 'Please enter a name' }]}>
@@ -491,12 +545,7 @@ const AddMealPage = () => {
                       style={{ borderRadius: '10px' }}
                     />
                   ) : (
-                    <Image
-                      width={200}
-                      src={initialFormValues.image}
-                      alt="Meal Image"
-                      style={{ borderRadius: '10px' }}
-                    />
+                    <Image width={200} src={initialFormValues.image} alt="Image" style={{ borderRadius: '10px' }} />
                   )}
                   <Form.Item name="image">
                     <label htmlFor="imageInput" name="image">
@@ -575,8 +624,33 @@ const AddMealPage = () => {
                       </Form.Item>
                     </Col>
                   </Row>
+                  <Row>
+                    <Col span={20}>
+                      <Form.Item label="Physical Equipments" name="physical_equipments">
+                        <Select
+                          size="large"
+                          mode="multiple"
+                          allowClear
+                          style={{ width: '100%' }}
+                          placeholder="Please select"
+                          options={equipmentOptions}
+                          onChange={(e) => console.log(e)}
+                          filterOption={(inputValue, option) =>
+                            option.label.props.children[1].props.children
+                              .toLowerCase()
+                              .includes(inputValue.toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col style={{ display: 'flex', alignItems: 'center' }}>
+                      <Button type="primary" style={{ marginTop: '5px', marginLeft: '5px' }} onClick={openModal}>
+                        Manage Equipment
+                      </Button>
+                    </Col>
+                  </Row>
 
-                  {generateFormList('physical_equipments', [], physicalEquipmentsFields)}
+                  {/* {generateFormList('physical_equipments', [], physicalEquipmentsFields)} */}
                 </>
               )}
 
@@ -591,7 +665,7 @@ const AddMealPage = () => {
               )}
 
               <Form.Item>
-                <Button type="primary" htmlType="submit">
+                <Button type="primary" loading={loading} htmlType="submit">
                   {!id ? 'Submit' : 'Save'}
                 </Button>
               </Form.Item>

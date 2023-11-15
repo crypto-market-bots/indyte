@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux';
 import rootReducer from './store';
+import CustomErrorBoundary from './ErrorBoundary';
 import { configureStore } from '@reduxjs/toolkit';
 // ----------------------------------------------------------------------
 
@@ -14,9 +15,11 @@ const store = configureStore({
   reducer: rootReducer,
 });
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <CustomErrorBoundary>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </CustomErrorBoundary>
 );
 
 // If you want to enable client cache, register instead.

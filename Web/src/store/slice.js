@@ -19,6 +19,14 @@ import {
   updateEquipment,
   fetchUserMealRecommendation,
   addMeal,
+  fetchUserWorkoutRecommendation,
+  fetchHistory,
+  getGoalImages,
+  getActivityImages,
+  getlifestyleImages,
+  getBannerImages,
+  ResetPassword,
+  getWeights,
 } from '../utils/apiCalls';
 
 const initialState = {
@@ -26,6 +34,7 @@ const initialState = {
     login: false,
   },
   data: {
+    history: [],
     login: [],
     customers: [],
     customerDetails: [],
@@ -40,8 +49,15 @@ const initialState = {
     singleWorkout: [],
     equipments: [],
     userMealRecommendation: [],
+    userWorkoutRecommendation: [],
+    lifestyleImages: [],
+    goalImages: [],
+    activityImages: [],
+    bannerImages: [],
+    weights: [],
   },
   loading: {
+    editMeal: false,
     addMeal: false,
     refreshOrders: false,
     login: false,
@@ -49,6 +65,7 @@ const initialState = {
     singleExercise: false,
     singleWorkout: false,
     addEquipment: false,
+    history: false,
   },
 };
 
@@ -90,6 +107,12 @@ export const slice = createSlice({
       .addCase(addMeal.pending, (state, action) => {
         state.loading.addMeal = true;
       })
+      .addCase(EditMeal.pending, (state, action) => {
+        state.loading.editMeal = true;
+      })
+      .addCase(EditMeal.fulfilled, (state, action) => {
+        state.loading.editMeal = false;
+      })
       .addCase(fetchSingleMealData.pending, (state, action) => {
         state.loading.singlemeal = true;
       })
@@ -114,6 +137,8 @@ export const slice = createSlice({
         state.loading.singleWorkout = true;
       })
       .addCase(fetchSingleWorkout.fulfilled, (state, action) => {
+        console.log('action ', action);
+
         state.loading.singleWorkout = false;
         state.data.singleWorkout = action.payload;
       })
@@ -133,8 +158,33 @@ export const slice = createSlice({
         state.loading.updateEquipment = false;
       })
       .addCase(fetchUserMealRecommendation.fulfilled, (state, action) => {
-        console.log('action paylaod ', action.payload);
         state.data.userMealRecommendation = action.payload;
+      })
+      .addCase(fetchUserWorkoutRecommendation.fulfilled, (state, action) => {
+        console.log('action paylaod ', action.payload);
+        state.data.userWorkoutRecommendation = action.payload;
+      })
+      .addCase(fetchHistory.pending, (state, action) => {
+        state.loading.history = true;
+      })
+      .addCase(fetchHistory.fulfilled, (state, action) => {
+        state.data.history = action.payload;
+        state.loading.history = false;
+      })
+      .addCase(getGoalImages.fulfilled, (state, action) => {
+        state.data.goalImages = action.payload;
+      })
+      .addCase(getActivityImages.fulfilled, (state, action) => {
+        state.data.activityImages = action.payload;
+      })
+      .addCase(getBannerImages.fulfilled, (state, action) => {
+        state.data.bannerImages = action.payload;
+      })
+      .addCase(getlifestyleImages.fulfilled, (state, action) => {
+        state.data.lifestyleImages = action.payload;
+      })
+      .addCase(getWeights.fulfilled, (state, action) => {
+        state.data.weights = action.payload;
       });
   },
 });

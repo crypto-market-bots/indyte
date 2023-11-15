@@ -22,11 +22,11 @@ export default function DietitianPage() {
   };
 
   const filteredUsers = Dietitians?.filter(
-    (user) => user.first_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1
+    (user) => user.first_name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 && user.type === 'dietitian'
   );
 
-  const handleNavigate = () => {
-    navigate('/dashboard/user/dietitian/dfkjd');
+  const handleNavigate = (id) => {
+    navigate(`/dashboard/user/dietitian/${id}`);
   };
 
   useEffect(() => {
@@ -56,13 +56,20 @@ export default function DietitianPage() {
 
         <Grid container spacing={2}>
           {filteredUsers?.map((user) => {
-            const { _id, first_name, last_name, status, photo } = user;
+            const { _id, first_name, last_name, status, profile_photo } = user;
             const isSelected = selected.includes(first_name);
+            console.log(user);
 
             return (
               <Grid item key={_id} xs={12} sm={6} md={4} lg={3}>
-                <Card onClick={handleNavigate} sx={{ cursor: 'pointer' }}>
-                  <CardMedia component="img" image={photo} alt={first_name} />
+                <Card onClick={() => handleNavigate(_id)} sx={{ cursor: 'pointer' }}>
+                  {/* {photo?  */}
+                  <CardMedia
+                    component="img"
+                    style={{ aspectRatio: 1 / 1 }}
+                    image={profile_photo ? profile_photo : '/blank-profile.jpg'}
+                    alt={first_name}
+                  />
 
                   <CardContent>
                     <Typography variant="subtitle2" noWrap>

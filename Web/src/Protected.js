@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-export default function Protected(props) {
-  const { Component } = props;
-  const navigate = useNavigate();
-  useEffect(() => {
-    const login = localStorage.getItem('token');
-    if (!login) {
-      navigate('/login');
-    }
-  }, []);
+const Protected = ({ Component }) => {
+  const token = localStorage.getItem('token');
 
-  return <div>{<Component />}</div>;
-}
+  if (!token || token == 'undefined') {
+    // Redirect to the login page if the user is not authenticated
+    return <Navigate to="/login" />;
+  }
+  return <Component />;
+
+  // Render the protected content if the user is authenticated
+};
+
+export default Protected;

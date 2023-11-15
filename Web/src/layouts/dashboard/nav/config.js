@@ -39,6 +39,11 @@ var navConfig = {
       path: '/dashboard/templates',
       icon: icon('ic_cart'),
     },
+    {
+      title: 'Image Gallery',
+      path: '/dashboard/images',
+      icon: icon('ic_cart'),
+    },
   ],
   dietitian: [
     {
@@ -58,6 +63,11 @@ var navConfig = {
       icon: icon('ic_cart'),
     },
     {
+      title: 'Weight Tracker',
+      path: '/dashboard/weight-tracker',
+      icon: icon('ic_cart'),
+    },
+    {
       title: 'History',
       path: '/dashboard/history',
       icon: icon('ic_cart'),
@@ -70,6 +80,11 @@ var navConfig = {
     {
       title: 'Templates',
       path: '/dashboard/templates',
+      icon: icon('ic_cart'),
+    },
+    {
+      title: 'Tracker',
+      path: '/dashboard/tracker',
       icon: icon('ic_cart'),
     },
   ],
