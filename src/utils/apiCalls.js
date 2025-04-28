@@ -1,0 +1,347 @@
+import api from '../instance/api';
+import { createApiThunk } from '../store/createApiThunk';
+
+// ---> API INITIALIZATION SEQUENCE
+// NAME
+// APICALL
+// SUCCESS MESSAGE : STRING | FUNCTION
+// SUCCESS RESPONSE
+// ERROR MESSAGE
+
+export const login = createApiThunk(
+  'login/login',
+  (requestData) => api.post('/login', requestData),
+  'Login Successful',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchCustomer = createApiThunk(
+  'fetch/customers',
+  () => api.get('/fetch-user?type=user'),
+  '',
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchCustomerDetails = createApiThunk(
+  'fetch/customers-details',
+  (id) => api.get(`/fetch-user-details/${id}?type=user`),
+  '',
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchDietitian = createApiThunk(
+  'fetch/dietitians',
+  () => api.get('/fetch-user?type=dietitian'),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const assignDietitian = createApiThunk(
+  'assign/dietitian',
+  (requestData) => api.post('/assign-dietitian', requestData),
+  'dietitians assigned successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const getUserDetails = createApiThunk(
+  'get/user',
+  () => api.get('/get-detail?from=ss'),
+  '',
+  (response) => response.data.user,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addDietitian = createApiThunk(
+  'get/user',
+  () => api.post('/add-dietitian'),
+  'Dietitian Added successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const fetchDietitianDetails = createApiThunk(
+  'fetch/dietitian-details',
+  (id) => api.get(`/fetch-user-details/${id}?type=dietitian`),
+  '',
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addMeal = createApiThunk(
+  'add/meal',
+  (requestData) => api.post('/add-meal', requestData),
+  'Meal Added successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchMeal = createApiThunk(
+  'fetch/meal',
+  (requestData) => api.get('/meals', requestData),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchSingleMealData = createApiThunk(
+  'fetch/SingleMealData',
+  (id) => api.get(`/meals/${id}`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const deleteMeal = createApiThunk(
+  'delete/Meal',
+  (id) => api.delete(`/delete-meal/${id}`),
+  'Meal Deleted successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const EditMeal = createApiThunk(
+  'Edit/SingleMealData',
+  (requestData) => api.put(`/update-meal/${requestData.id}`, requestData.formData),
+  'Meal Edited successfully',
+  (response) => response.data,
+  (error) => error.response.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchAllExercises = createApiThunk(
+  'fetch/Exercise',
+  (id) => api.get(`/exercises`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const fetchSingleExercise = createApiThunk(
+  'fetch/singleExercise',
+  (id) => api.get(`/exercises/${id}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const EditExercise = createApiThunk(
+  'Edit/SingleMealData',
+  (requestData) => api.put(`/update-exercise/${requestData.id}`, requestData.formData),
+  'Exercise Edited successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addExercise = createApiThunk(
+  'add/exercise',
+  (requestData) => api.post('/add-exercise', requestData),
+  'Exercise Added successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const deleteExercise = createApiThunk(
+  'delete/Exercise',
+  (id) => api.delete(`/delete-exercise/${id}`),
+  'Exercises Deleted Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchWorkouts = createApiThunk(
+  'fetch/workouts',
+  () => api.get(`/workout`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchSingleWorkout = createApiThunk(
+  'fetch/singleWorkouts',
+  (id) => api.get(`/workout/${id}`),
+  '',
+  (response) => response.data.message,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const deleteWorkout = createApiThunk(
+  'delete/workouts',
+  (id) => api.delete(`/delete-workout/${id}`),
+  'Workouts deleted Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const EditWorkout = createApiThunk(
+  'edit/workouts',
+  (requestData) => api.put(`/update-workout/${requestData.id}`, requestData.formData),
+  'Workouts Edited Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addWorkout = createApiThunk(
+  'add/workout',
+  (requestData) => api.post('/create-workout', requestData),
+  'Workout Added successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const fetchAllEquipment = createApiThunk(
+  'fetch/all-equipment',
+  () => api.get(`/equipment`),
+  '',
+  (response) => response?.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateEquipment = createApiThunk(
+  'fetch/update-equipment',
+  (req) => api.put(`/update-equipment/${req.id}`, req.formData),
+  'equipment updated',
+  (response) => response?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const addEquipment = createApiThunk(
+  'fetch/add-equipment',
+  (requestData) => api.post(`/add-equipment`, requestData),
+  'equipment added',
+  (response) => response?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const deleteEquipment = createApiThunk(
+  'delete/equipment',
+  (id) => api.delete(`/delete-equipment/${id}`),
+  'equipment deleted',
+  (response) => response?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchUserMealRecommendation = createApiThunk(
+  'fetch/UserMealRecommendation',
+  (reqData) => api.get(`/fetch-user-meal-recommendation/${reqData.user_id}?type=${reqData.type}&value=${reqData.date}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchUserWorkoutRecommendation = createApiThunk(
+  'fetch/UserWorkoutRecommendation',
+  (reqData) =>
+    api.get(`/fetch-user-workout-recommendation/${reqData.user_id}?type=${reqData.type}&value=${reqData.date}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.error ?? error.message ?? 'An error occurred.'
+);
+
+export const addUserMealRecommendation = createApiThunk(
+  'add/UserMealRecommendation',
+  (payload) => api.post(`/new-user-meal-recommendation`, payload),
+  'Meal Assigned Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const updateUserMealRecommendation = createApiThunk(
+  'update/UserMealRecommendation',
+  (mealId) => api.put(`/update-user-meal-recommendation/${mealId}`, { mealId: 'main hhu meal id ' }),
+  'Meal Updated Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addUserWorkoutRecommendation = createApiThunk(
+  'add/UserWorkoutRecommendation',
+  (payload) => api.post(`/new-user-workout-recommendation`, payload),
+  'Workout Assigned Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchHistory = createApiThunk(
+  'fetch/history',
+  (reqData) => api.post(`/get-history?page=${reqData.page}&perPage=${reqData.perPage}`, reqData.payload),
+  '',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const fetchWeights = createApiThunk(
+  'fetch/weights',
+  (userId) => api.get(`/get-weights/${userId}`),
+  '',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const getActivityImages = createApiThunk(
+  'get/activityImages',
+  () => api.get(`/get-image-name?type=physicalActivities`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const getGoalImages = createApiThunk(
+  'get/Goalimages',
+  () => api.get(`/get-image-name?type=goal`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const getlifestyleImages = createApiThunk(
+  'get/Lifestyleimages',
+  () => api.get(`/get-image-name?type=lifestyle`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const getBannerImages = createApiThunk(
+  'get/bannerimages',
+  () => api.get(`/get-image-name?type=banner`),
+  '',
+  (response) => response.data.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const addImage = createApiThunk(
+  'add/image',
+  (payload) => api.post(`/create-image-name`, payload),
+  'Image Added Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const deleteImage = createApiThunk(
+  'delete/image',
+  (id) => api.delete(`/delete-image-name/${id}`),
+  'Image Deleted Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateImage = createApiThunk(
+  'update/image',
+  (reqData) => api.put(`/update-image-name/${reqData.id}`, reqData.payload),
+  'Image Updated Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const ResetPassword = createApiThunk(
+  'reset/password',
+  (payload) => api.patch(`/reset-password`, payload),
+  'Password Changed Successfully',
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+
+export const getWeights = createApiThunk(
+  'get/weights',
+  (payload) => api.get(`/get-weights?id=${payload.id}&type=${payload.type}`),
+  '',
+  (response) => response.data?.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
+export const updateWeights = createApiThunk(
+  'put/weights',
+  (payload) => api.put(`/update-weight-status`, payload),
+  (response) => response.data.message,
+  (response) => response.data,
+  (error) => error.response?.data?.message ?? error.message ?? 'An error occurred.'
+);
