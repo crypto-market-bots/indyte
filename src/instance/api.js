@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // baseURL: 'http://localhost:8080/api',
-  baseURL: 'https://13.127.229.77/api',
+  baseURL: 'http://localhost:8080/api',
+  // baseURL: 'https://13.127.229.77/api',
   // baseURL: 'https://ec2-15-206-239-93.ap-south-1.compute.amazonaws.com/api',
 });
 
